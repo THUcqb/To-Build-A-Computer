@@ -1,3 +1,0 @@
-xst -intstyle ise -ifn "/home/shw/cqb/MemoryAndSerialPort/memory.xst" -ofn "/home/shw/cqb/MemoryAndSerialPort/memory.syr" 
-ngdbuild -intstyle ise -dd _ngo -nt timestamp -i -p xc3s1200e-fg320-4 memory.ngc memory.ngd  
-ngdbuild -intstyle ise -dd _ngo -nt timestamp -i -p xc3s1200e-fg320-4 memory.ngc memory.ngd  

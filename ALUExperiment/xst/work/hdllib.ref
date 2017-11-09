@@ -1,4 +1,0 @@
-AR alu behavorial D:/vhdlprograms/ALUExperiment/ALU.vhd sub00/vhpl01 1508489387
-EN aluexperiment NULL D:/vhdlprograms/ALUExperiment/ALUExperiment.vhd sub00/vhpl02 1508489388
-AR aluexperiment aluexperiment_bhv D:/vhdlprograms/ALUExperiment/ALUExperiment.vhd sub00/vhpl03 1508489389
-EN alu NULL D:/vhdlprograms/ALUExperiment/ALU.vhd sub00/vhpl00 1508489386
