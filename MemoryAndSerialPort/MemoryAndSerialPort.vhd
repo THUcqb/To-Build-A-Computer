@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    19:13:52 11/09/2017 
+-- Create Date:    20:57:08 11/09/2017 
 -- Design Name: 
--- Module Name:    memory - Behavioral 
+-- Module Name:    MemoryAndSerialPort - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -29,10 +29,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity memory is
-end memory;
+entity MemoryAndSerialPort is
+end MemoryAndSerialPort;
 
-architecture Behavioral of memory is
+architecture Behavioral of MemoryAndSerialPort is
 
 begin
 
