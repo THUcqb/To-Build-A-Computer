@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -o "/home/shw/cqb/ALUExperiment/ALU_isim_beh.exe" -prj "/home/shw/cqb/ALUExperiment/ALU_beh.prj" "work.ALU" 
