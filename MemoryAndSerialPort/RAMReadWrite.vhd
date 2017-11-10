@@ -8,10 +8,10 @@ entity RAMReadWrite is
     port(
         --  clock and reset
         clk, rst: in std_logic;
+        ram1Begin: in std_logic;
+        ram1Started, ram1End: out std_logic;
         --  switch
         sw: in std_logic_vector(15 downto 0);
-        --  LED: 15-8 showing address while 7-0 showing data
-        ledDisplay: out std_logic_vector(15 downto 0);
         --  RAM control signal
         ram1Addr: out std_logic_vector(17 downto 0);
         ram1Data: inout std_logic_vector(15 downto 0);
@@ -41,13 +41,14 @@ begin
     begin
         -- Resest
         if (rst = '0') then
-            ledDisplay <= (others => '0');
 
-            ram1Addr <= (others => '0');
-            ram1Data <= (others => 'Z');
+            ram1Addr <= (Others => '0');
+            ram1Data <= (Others => 'Z');
             ram1OE <= '1';
             ram1WE <= '1';
             ram1EN <= '1';
+            ram1Started <= '0';
+            ram1End <= '0';
 
             currentState <= loadingAddr;
 
@@ -58,16 +59,18 @@ begin
             --  Loading from sw
                 --  Load address
                 when loadingAddr =>
-                    cnt := 0;
-                    tmpAddr(15 downto 0) <= sw;
-                    ledDisplay(15 downto 8) <= sw(7 downto 0);
+                    if (ram1Begin = '1') then
+                        ram1End <= '0';
+                        ram1Started <= '1';
+                        cnt := 0;
+                        tmpAddr(15 downto 0) <= sw;
 
-                    currentState <= loadingData;
+                        currentState <= loadingData;
+                     end if;
 
                 --  Load data
                 when loadingData =>
-                    tmpData <= sw;
-                    ledDisplay(7 downto 0) <= sw(7 downto 0);
+                    tmpData <= ram1Data;
 
                     ram1EN <= '0';
 
@@ -77,8 +80,6 @@ begin
                 --  Writing stage 1:
                 --  prepare and show the address and data.
                 when writingPrepare =>
-                    ledDisplay(15 downto 8) <= tmpAddr(7 downto 0);
-                    ledDisplay(7 downto 0) <= tmpData(7 downto 0);
 
                     ram1Addr <= tmpAddr;
                     ram1Data <= tmpData;
@@ -117,9 +118,6 @@ begin
                     cnt := cnt - 1;
                     tmpAddr <= tmpAddr - 1;
 
-                    ledDisplay(15 downto 8) <= tmpAddr(7 downto 0) - 1;
-                    ledDisplay(7 downto 0) <= "00000000";
-
                     ram1Data <= (others => 'Z');
 
                     currentState <= readingExec;
@@ -135,9 +133,10 @@ begin
                 --  Reading stage 3:
                 --  Read data out and display
                 when readingComplete =>
-                    ledDisplay(7 downto 0) <= ram1Data(7 downto 0);
 
                     if (cnt = 0) then      --  Already the base addr
+                        ram1End <= '1';
+                        ram1Started <= '0';
                         currentState <= loadingAddr;
                     else
                         currentState <= readingPrepare;
