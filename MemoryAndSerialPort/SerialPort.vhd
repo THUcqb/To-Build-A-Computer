@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity SerialPort is 
+entity SerialPort is
     port(
         clk, rst: in std_logic;
         sw: in std_logic_vector(7 downto 0);
@@ -63,5 +63,5 @@ begin
                     cur_state <= w1;
             end case;
         end if;
-    end process;    
-end Behavioral;   
+    end process;
+end Behavioral;

@@ -1,6 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL; 
+use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity RamController is
@@ -63,11 +63,11 @@ begin
                     ram1_en <= '0';
                     cur_state <= w2;
                     dyp <= "10011110";
-                when w2 => 
+                when w2 =>
                     ram1_we <= '0';
                     cur_state <= w3;
                     dyp <= "11011100";
-                when w3 => 
+                when w3 =>
                     ram1_we <= '1';
                     cnt := cnt + 1;
                     dyp <= "11011010";
@@ -79,14 +79,14 @@ begin
                         tmp_data <= tmp_data + 1;
                         cur_state <= w1;
                     end if;
-                when r1 => 
+                when r1 =>
                     ram1_data <= (Others => 'Z');
                     ram1_oe <= '0';
                     cur_state <= r2;
                     led(15 downto 8) <= tmp_addr(7 downto 0);
 					led(7 downto 0) <= tmp_data(7 downto 0);
                     dyp <= "11111010";
-                when r2 => 
+                when r2 =>
                     tmp_data <= ram1_data;
                     led(15 downto 8) <= tmp_addr(7 downto 0);
 					led(7 downto 0) <= tmp_data(7 downto 0);
@@ -94,7 +94,7 @@ begin
                     ram1_addr <= tmp_addr;
                     cnt := cnt + 1;
                     dyp <= "00001110";
-                    if (cnt = 10) then 
+                    if (cnt = 10) then
                         cur_state <= w11;
                         cnt := 0;
                         ram1_addr <= tmp_addr + '1';
@@ -113,19 +113,19 @@ begin
                     ram2_we <= '0';
                     dyp <= "11011110";
                     cur_state <= w33;
-                when w33 => 
+                when w33 =>
                     ram2_we <= '1';
                     cnt := cnt + 1;
                     dyp <= "11101110";
-                    if (cnt:=10) then
+                    if (cnt=10) then
                         cnt:=0;
                         cur_state <= r11;
-                    else 
+                    else
                         tmp_addr <= tmp_addr + 1;
                         tmp_data <= tmp_data + 1;
                         cur_state <= w11;
                     end if;
-                when r11 => 
+                when r11 =>
                     ram2_oe <= '0';
                     ram2_data <= (Others => 'Z');
                     led(15 downto 8) <= tmp_addr(7 downto 0);
