@@ -138,6 +138,7 @@ begin
                         ram1End <= '1';
                         ram1Started <= '0';
                         currentState <= loadingAddr;
+                        ram1OE <= '1';
                     else
                         currentState <= readingPrepare;
                     end if;

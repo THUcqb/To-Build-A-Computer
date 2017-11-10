@@ -34,14 +34,14 @@ architecture Behavioral of SerialPort is
         dyp: out std_logic_vector(0 to 6)
     );
     end component;
-    
+
     type state is(
         w1, w2, w3, w4, r1, r2, startMem, waitMem, r3
     );
     shared variable cur_state: state;
     shared variable tmp_data: std_logic_vector(15 downto 0);
     signal ram1Begin, ram1Started, ram1End: std_logic;
-    
+
 begin
     ram1: RAMReadWrite port map
     (
@@ -93,6 +93,8 @@ begin
                     else cur_state := r1;
                     end if;
                 when startMem =>
+                    rdn <= '1';
+                    wrn <= '0';
                     ram1Begin <= '1';
                     if (ram1Started = '1') then
                         cur_state := waitMem;
@@ -106,6 +108,7 @@ begin
                     flags <= "011";
                     tmp_data := ram1Data;
                     rdn <= '1';
+                    wrn <= '1';
                     cur_state := w1;
                 when others =>
                     flags <= "000";
