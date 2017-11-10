@@ -1,4 +1,7 @@
 # intermediate build files
+*.debug
+*.log
+*.tcl
 *.bgn
 *.bit
 *.bld
@@ -65,6 +68,7 @@ xlnx_auto_0_xdb/
 xst/
 _ngo/
 _xmsgs/
+planAhead_run_*/
 
 # Makefile build
 build/
