@@ -8,6 +8,7 @@ entity SerialPort is
     port(
         clk, rst: in std_logic;
         led: out std_logic_vector(7 downto 0);
+        flags: out std_logic_vector(2 downto 0);
         rdn, wrn, ram1_en, ram1_oe, ram1_we: out std_logic;
         tbre, tsre, ready: in std_logic;
         ram1_data: inout std_logic_vector(7 downto 0)
@@ -30,38 +31,47 @@ begin
             wrn <= '1';
             rdn <= '1';
             led <= "00000000";
+            flags <= "000";
             cur_state := r1;
         elsif (clk'event and clk = '0') then
             case cur_state is
                 when w1 =>
+                    flags <= "100";
                     ram1_data <= tmp_data + 1;
                     wrn <= '0';
                     cur_state := w2;
                 when w2 =>
+                    flags <= "101";
                     wrn <= '1';
                     cur_state := w3;
                 when w3 =>
+                    flags <= "110";
                     if (tbre = '1') then cur_state := w4;
                     end if;
                 when w4 =>
+                    flags <= "111";
                     if (tsre = '1') then cur_state := r1;
                     end if;
                 when r1 =>
                     rdn <= '1';
                     ram1_data <= (others => 'Z');
+                    flags <= "001";
                     cur_state := r2;
                 when r2 =>
+                    flags <= "010";
                     if (ready = '1') then
                         rdn <= '0';
                         cur_state := r3;
                     else cur_state := r1;
                     end if;
                 when r3 =>
+                    flags <= "011";
                     led <= ram1_data;
                     tmp_data := ram1_data;
                     rdn <= '1';
                     cur_state := w1;
                 when others =>
+                    flags <= "000";
                     null;
             end case;
         end if;

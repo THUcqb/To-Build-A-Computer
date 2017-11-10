@@ -26,3 +26,8 @@ NET "led[3]" LOC = B11;
 NET "led[2]" LOC = A11;
 NET "led[1]" LOC = E10;
 NET "led[0]" LOC = D10;
+
+
+NET "flags[2]" LOC = A14;
+NET "flags[1]" LOC = E13;
+NET "flags[0]" LOC = D13;
