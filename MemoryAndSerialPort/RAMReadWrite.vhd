@@ -17,7 +17,7 @@ entity RAMReadWrite is
         ram1Data: inout std_logic_vector(15 downto 0);
         ram1OE, ram1WE, ram1EN: out std_logic;
         --  Showing current state for debugging use.
-        dyp: out std_logic_vector(6 downto 0)
+        dyp: out std_logic_vector(0 to 6)
     );
 
 end RAMReadWrite;
@@ -41,10 +41,10 @@ begin
     begin
         -- Resest
         if (rst = '0') then
-            ledDisplay <= (Others => '0');
+            ledDisplay <= (others => '0');
 
-            ram1Addr <= (Others => '0');
-            ram1Data <= (Others => 'Z');
+            ram1Addr <= (others => '0');
+            ram1Data <= (others => 'Z');
             ram1OE <= '1';
             ram1WE <= '1';
             ram1EN <= '1';
@@ -58,6 +58,7 @@ begin
             --  Loading from sw
                 --  Load address
                 when loadingAddr =>
+                    cnt := 0;
                     tmpAddr(15 downto 0) <= sw;
                     ledDisplay(15 downto 8) <= sw(7 downto 0);
 
@@ -116,17 +117,16 @@ begin
                     cnt := cnt - 1;
                     tmpAddr <= tmpAddr - 1;
 
-                    ledDisplay <= (Others => '0');
+                    ledDisplay(15 downto 8) <= tmpAddr(7 downto 0) - 1;
+                    ledDisplay(7 downto 0) <= "00000000";
 
-                    ram1Data <= (Others => 'Z');
+                    ram1Data <= (others => 'Z');
 
                     currentState <= readingExec;
 
                 --  Reading stage 2:
                 --  Show the address to read
                 when readingExec =>
-                    ledDisplay(15 downto 8) <= tmpAddr(7 downto 0);
-
                     ram1OE <= '0';
                     ram1Addr <= tmpAddr;
 
@@ -139,6 +139,8 @@ begin
 
                     if (cnt = 0) then      --  Already the base addr
                         currentState <= loadingAddr;
+                    else
+                        currentState <= readingPrepare;
                     end if;
                 when others =>
             end case;
@@ -147,8 +149,8 @@ begin
 
     --  LED Seven-Segment digital tube showing state information
     with currentState select
-        dyp <= "0000000" when loadingData,
-               "1000000" when loadingAddr,
+        dyp <= "0000000" when loadingAddr,
+               "1000000" when loadingData,
                "0100000" when writingPrepare,
                "0010000" when writingExec,
                "0001000" when writingComplete,
