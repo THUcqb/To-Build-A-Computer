@@ -76,7 +76,7 @@ architecture InstructionDecode_bhv of InstructionDecode is
         -- OUT
             control_out_ex: out type_control_ex;
             control_out_mem: out type_control_mem;
-            control_out_wb: out type_control_wb
+            control_out_wb: out type_control_wb;
 
             branch_op: out std_logic_vector(4 downto 0)
         );
@@ -91,8 +91,8 @@ architecture InstructionDecode_bhv of InstructionDecode is
             
         -- IN
             rx, ry: in std_logic_vector(2 downto 0);
-            write_register: in std_logic_vector(2 downto 0);
-            write_data: in std_logic_vector(2 downto 0);
+            register_from_write_back: in std_logic_vector(2 downto 0);
+            data_from_write_back: in std_logic_vector(2 downto 0);
 
             control_reg_write: in std_logic;
 
@@ -101,5 +101,68 @@ architecture InstructionDecode_bhv of InstructionDecode is
             ry_val: out std_logic_vector(15 downto 0)
         );
     end component;
+
+    signal ex_after_control, ex_after_bubble_maker: type_control_ex;
+    signal mem_after_control, mem_after_bubble_maker: type_control_mem;
+    signal wb_after_control, wb_after_bubble_maker: type_control_wb;
+
+    signal branch_op: std_logic_vector(4 downto 0);
+    signal zero_flag: std_logic;
+
 begin
+    registers: Registers
+        generic map
+        (
+            delay => delay
+        )
+        port map
+        (
+            clk => clk,
+            rx => instruction(10 downto 8), ry => instruction(7 downto 5),
+            register_from_write_back => register_from_write_back, data_from_write_back => data_from_write_back,
+            control_reg_write => reg_write,
+            rx_val => rx_val, ry_val => ry_val
+        );
+
+    control: Control
+        port map
+        (
+            op => instruction(15 downto 11),
+            control_out_wb => wb_after_control,
+            control_out_ex => ex_after_control,
+            control_out_mem => mem_after_control,
+            branch_op => branch_op
+        );
+
+    bubble_maker: BubbleMaker
+        port map
+        (
+            control_in_ex => ex_after_control,
+            control_in_mem => mem_after_control,
+            control_in_wb => wb_after_control,
+
+            control_out_ex => ex_after_bubble_maker,
+            control_out_mem => mem_after_bubble_maker,
+            control_out_wb => wb_after_bubble_maker,
+
+            bubble_select => bubble_select
+        );
+
+    branch_control: BubbleControl
+        port map
+        (
+            branch_op => branch_op,
+            zero_flag => zero_flag,
+            pc_select => pc_select
+        );
+
+    zero: process(rx_val)
+    begin
+        if (rx_val = "0000000000000000")
+            zero_flag <= '0';
+        else
+            zero_flag <= '1';
+        end if;
+    end process;
+ 
 end InstructionDecode_bhv;
