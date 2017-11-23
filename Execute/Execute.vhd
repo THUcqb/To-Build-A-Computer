@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 use work.utils.all;
 
@@ -94,11 +95,14 @@ architecture Execute_beh of Execute is
     signal cf, zf, sf, vf: std_logic;
 
     signal y_forward_mux_out: std_logic_vector(15 downto 0);
+    signal rd_mux_out: std_logic_vector(15 downto 0);
 
 begin
 
     control_out_mem <= control_in_mem;
     control_out_wb <= control_in_wb;
+
+    id_ex_rd <= rd_mux_out(2 downto 0);
 
     x_forward_mux: Mux3 port map
     (
@@ -126,6 +130,15 @@ begin
         output => alu_input_y
     );
 
+    rd_mux: Mux3 port map
+    (
+        input0 => std_logic_vector(resize(unsigned(rx), 16)),
+        input1 => std_logic_vector(resize(unsigned(ry), 16)),
+        input2 => std_logic_vector(resize(unsigned(rz), 16)),
+        mux_select => control_in_ex.reg_dst,
+        output => rd_mux_out
+    );
+
     alu: ALU port map
     (
         input_x => alu_input_x, input_y => alu_input_y,
@@ -140,6 +153,7 @@ begin
         if (clk'event and clk = '1') then
             alu_result <= alu_result_before_reg;
             write_data <= y_forward_mux_out;
+            ex_mem_rd <= rd_mux_out(2 downto 0);
         end if;
 
     end process clockUp;
