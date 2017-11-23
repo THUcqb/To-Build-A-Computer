@@ -12,7 +12,7 @@ entity Control is
     -- OUT
         control_out_ex: out type_control_ex;
         control_out_mem: out type_control_mem;
-        control_out_wb: out type_control_wb
+        control_out_wb: out type_control_wb;
 
         branch_op: out std_logic_vector(4 downto 0)
     );

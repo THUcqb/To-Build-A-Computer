@@ -12,8 +12,8 @@ entity Registers is
         
     -- IN
         rx, ry: in std_logic_vector(2 downto 0);
-        write_register: in std_logic_vector(2 downto 0);
-        write_data: in std_logic_vector(2 downto 0);
+        register_from_write_back: in std_logic_vector(2 downto 0);
+        data_from_write_back: in std_logic_vector(15 downto 0);
 
         control_reg_write: in std_logic;
 
@@ -23,6 +23,6 @@ entity Registers is
     );
 end Registers;
 
-architecture Registers_bhv of Regsiters is
+architecture Registers_bhv of Registers is
 begin
 end Registers_bhv;
