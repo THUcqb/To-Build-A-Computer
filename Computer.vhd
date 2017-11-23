@@ -7,7 +7,15 @@ use work.utils.all;
 
 entity Computer is
 
-    port(
+    generic
+    (
+        N: integer := 1;
+        period: time := 20 ns;
+        delay_in_registers: time := 5 ns
+    );
+
+    port
+    (
         -- clock
         clk, rst: in std_logic;
 
@@ -19,7 +27,7 @@ entity Computer is
         -- Data memory - RAM 1
         data_memory_data: inout std_logic_vector(15 downto 0);
 
-        data_memory_pin: out ram_pin;
+        data_memory_pin: out ram_pin
 
         -- serial port
 
@@ -57,6 +65,9 @@ architecture Computer_beh of Computer is
     end component InstructionFetch;
 
     component InstructionDecode is
+        generic (
+            delay: time
+        )
         port (
             clk: in std_logic;
 
