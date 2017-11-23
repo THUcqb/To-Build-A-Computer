@@ -9,7 +9,7 @@ entity BubbleMaker is
     -- IN
         control_in_ex: in type_control_ex;
         control_in_mem: in type_control_mem;
-        control_in_wb: in type_control_wb
+        control_in_wb: in type_control_wb;
 
         bubble_select: in std_logic;
 

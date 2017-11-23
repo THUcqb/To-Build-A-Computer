@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use work.utils.all;
 
 entity InstructionDecode is
     generic (
@@ -57,7 +58,7 @@ architecture InstructionDecode_bhv of InstructionDecode is
         -- IN
             control_in_ex: in type_control_ex;
             control_in_mem: in type_control_mem;
-            control_in_wb: in type_control_wb
+            control_in_wb: in type_control_wb;
 
             bubble_select: in std_logic;
 
@@ -92,7 +93,7 @@ architecture InstructionDecode_bhv of InstructionDecode is
         -- IN
             rx, ry: in std_logic_vector(2 downto 0);
             register_from_write_back: in std_logic_vector(2 downto 0);
-            data_from_write_back: in std_logic_vector(2 downto 0);
+            data_from_write_back: in std_logic_vector(15 downto 0);
 
             control_reg_write: in std_logic;
 
@@ -108,9 +109,10 @@ architecture InstructionDecode_bhv of InstructionDecode is
 
     signal branch_op: std_logic_vector(4 downto 0);
     signal zero_flag: std_logic;
+    signal rx_comparer: std_logic_vector(15 downto 0);
 
 begin
-    registers: Registers
+    registers_entity: Registers
         generic map
         (
             delay => delay
@@ -119,12 +121,13 @@ begin
         (
             clk => clk,
             rx => instruction(10 downto 8), ry => instruction(7 downto 5),
-            register_from_write_back => register_from_write_back, data_from_write_back => data_from_write_back,
+            register_from_write_back => register_from_write_back,
+            data_from_write_back => data_from_write_back,
             control_reg_write => reg_write,
-            rx_val => rx_val, ry_val => ry_val
+            rx_val => rx_comparer, ry_val => ry_val
         );
 
-    control: Control
+    controller: Control
         port map
         (
             op => instruction(15 downto 11),
@@ -148,7 +151,7 @@ begin
             bubble_select => bubble_select
         );
 
-    branch_control: BubbleControl
+    branch_control: BranchControl
         port map
         (
             branch_op => branch_op,
@@ -156,9 +159,11 @@ begin
             pc_select => pc_select
         );
 
-    zero: process(rx_val)
+    rx_val <= rx_comparer;
+
+    zero: process(rx_comparer)
     begin
-        if (rx_val = "0000000000000000")
+        if (rx_comparer = "0000000000000000") then
             zero_flag <= '0';
         else
             zero_flag <= '1';
