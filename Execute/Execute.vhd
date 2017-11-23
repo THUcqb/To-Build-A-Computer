@@ -52,7 +52,7 @@ architecture Execute_beh of Execute is
             input_x : in std_logic_vector (15 downto 0);
             input_y : in std_logic_vector (15 downto 0);
             op : in std_logic_vector (3 downto 0);
-            
+
         -- OUT
             alu_result : out std_logic_vector (15 downto 0);
             --Carry Flag
@@ -65,25 +65,25 @@ architecture Execute_beh of Execute is
             vf : out std_logic
         );
     end component ALU;
-    
+
     component Mux2 is
         port (
-            input0: in std_logic_vector(15 downto 0);
-            input1: in std_logic_vector(15 downto 0);
-            mux_select: in std_logic;
-            
-            output: out std_logic_vector(15 downto 0)
+            i0: in std_logic_vector(15 downto 0);
+            i1: in std_logic_vector(15 downto 0);
+            s: in std_logic;
+
+            o: out std_logic_vector(15 downto 0)
         );
     end component Mux2;
-    
+
     component Mux3 is
         port (
-            input0: in std_logic_vector(15 downto 0);
-            input1: in std_logic_vector(15 downto 0);
-            input2: in std_logic_vector(15 downto 0);
-            mux_select: in std_logic_vector(1 downto 0);
-            
-            output: out std_logic_vector(15 downto 0)
+            i0: in std_logic_vector(15 downto 0);
+            i1: in std_logic_vector(15 downto 0);
+            i2: in std_logic_vector(15 downto 0);
+            s: in std_logic_vector(1 downto 0);
+
+            o: out std_logic_vector(15 downto 0)
         );
     end component Mux3;
 
@@ -106,37 +106,37 @@ begin
 
     x_forward_mux: Mux3 port map
     (
-        input0 => rx_val,
-        input1 => forward_data_from_wb,
-        input2 => forward_data_from_mem,
-        mux_select => forward_control_x,
-        output => alu_input_x
+        i0 => rx_val,
+        i1 => forward_data_from_wb,
+        i2 => forward_data_from_mem,
+        s => forward_control_x,
+        o => alu_input_x
     );
 
     y_forward_mux: Mux3 port map
     (
-        input0 => ry_val,
-        input1 => forward_data_from_wb,
-        input2 => forward_data_from_mem,
-        mux_select => forward_control_y,
-        output => y_forward_mux_out
+        i0 => ry_val,
+        i1 => forward_data_from_wb,
+        i2 => forward_data_from_mem,
+        s => forward_control_y,
+        o => y_forward_mux_out
     );
 
     y_alu_src_mux: Mux2 port map
     (
-        input0 => y_forward_mux_out,
-        input1 => immediate,
-        mux_select => control_in_ex.alu_src,
-        output => alu_input_y
+        i0 => y_forward_mux_out,
+        i1 => immediate,
+        s => control_in_ex.alu_src,
+        o => alu_input_y
     );
 
     rd_mux: Mux3 port map
     (
-        input0 => std_logic_vector(resize(unsigned(rx), 16)),
-        input1 => std_logic_vector(resize(unsigned(ry), 16)),
-        input2 => std_logic_vector(resize(unsigned(rz), 16)),
-        mux_select => control_in_ex.reg_dst,
-        output => rd_mux_out
+        i0 => std_logic_vector(resize(unsigned(rx), 16)),
+        i1 => std_logic_vector(resize(unsigned(ry), 16)),
+        i2 => std_logic_vector(resize(unsigned(rz), 16)),
+        s => control_in_ex.reg_dst,
+        o => rd_mux_out
     );
 
     alu: ALU port map

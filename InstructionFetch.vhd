@@ -22,7 +22,7 @@ entity InstructionFetch is
 
         -- data and address cable of instruction memory
         ram2_data: inout STD_LOGIC_VECTOR(15 downto 0);
-        ram2_pin: out RAM_PIN
+        ram2_pin: out type_ram_pin
     );
 end InstructionFetch;
 
