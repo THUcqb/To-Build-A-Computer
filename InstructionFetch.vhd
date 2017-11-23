@@ -22,7 +22,7 @@ entity InstructionFetch is
 
         -- data and address cable of instruction memory
         ram2_data: inout STD_LOGIC_VECTOR(15 downto 0);
-        ram2_addr: out STD_LOGIC_VECTOR(15 downto 0)
+        ram2_pin: out RAM_PIN
     );
 end InstructionFetch;
 
@@ -39,7 +39,7 @@ architecture Behavorial of InstructionFetch is
     constant disabled: STD_LOGIC := '1';
 
 begin
-    
+
     -- pc register output as ram2 address
     ram2_addr <= pc_out;
 
@@ -48,7 +48,7 @@ begin
 
     pcMux: process (branch_pc, pc_add1, pc_select)
     begin
-        
+
         case pc_select is
 
             when '0' =>
@@ -66,7 +66,7 @@ begin
 
     clockUp: process (clk)
     begin
-        
+
         if (clk'event and clk = '1') then
 
             -- write mux output into pc register
@@ -89,4 +89,3 @@ begin
 
 
 end Behavorial;
-
