@@ -22,12 +22,12 @@ entity Computer is
         -- Instruction memory - RAM 2
         instruction_memory_data: inout std_logic_vector(15 downto 0);
 
-        instruction_memory_pin: out ram_pin;
+        instruction_memory_pin: out type_ram_pin;
 
         -- Data memory - RAM 1
         data_memory_data: inout std_logic_vector(15 downto 0);
 
-        data_memory_pin: out ram_pin
+        data_memory_pin: out type_ram_pin
 
         -- serial port
 
@@ -60,7 +60,7 @@ architecture Computer_beh of Computer is
             -- Device pin
             -- data and address cable of instruction memory
             ram2_data: inout std_logic_vector(15 downto 0);
-            ram2_pin: out ram_pin
+            ram2_pin: out type_ram_pin
         );
     end component InstructionFetch;
 
@@ -148,12 +148,13 @@ architecture Computer_beh of Computer is
             -- Data
             alu_result: in std_logic_vector(15 downto 0);
             write_data: in std_logic_vector(15 downto 0);
+            ex_mem_rd: in std_logic_vector(2 downto 0);
 
             -- Control
             control_in_mem: in type_control_mem;
             control_in_wb: in type_control_wb;
 
-        -- MID
+        -- MID - write back
             -- data
             -- data_from_memory: out std_logic_vector(15 downto 0);
             -- data_from_alu_result: out std_logic_vector(15 downto 0);
@@ -165,6 +166,9 @@ architecture Computer_beh of Computer is
             mem_wb_rd: out std_logic_vector(2 downto 0);
             -- Control
             control_out_wb: out type_control_wb
+            -- Device
+            ram1_data: inout std_logic_vector(15 downto 0);
+            ram1_pin: out type_ram_pin
         );
     end component Memory;
 

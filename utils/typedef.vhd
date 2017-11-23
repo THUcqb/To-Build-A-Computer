@@ -5,10 +5,10 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 package utils is
 
-    type ram_pin is record
+    type type_ram_pin is record
         address: std_logic_vector(15 downto 0);
         oe, we, en: std_logic;
-    end record ram_pin;
+    end record type_ram_pin;
 
 
     type type_control_ex is record
