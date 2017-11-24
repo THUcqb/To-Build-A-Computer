@@ -65,6 +65,15 @@ architecture Execute_beh of Execute is
             vf : out std_logic
         );
     end component ALU;
+    
+    component ALUControl is
+        port (
+            alu_op: in std_logic_vector(1 downto 0);
+            func: in std_logic_vector(4 downto 0);
+            
+            op: out std_logic_vector(3 downto 0);
+        );
+    end component ALUControl;
 
     component Mux2 is
         port (
@@ -145,6 +154,13 @@ begin
         op => op,
         alu_result => alu_result_before_reg,
         cf => cf, zf => zf, sf => sf, vf => vf
+    );
+    
+    alu_control: ALUControl port map
+    (
+        alu_op => control_in_ex.alu_op,
+        func => immediate(4 downto 0),
+        op => op
     );
 
     clockUp: process(clk)
