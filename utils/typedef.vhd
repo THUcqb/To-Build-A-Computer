@@ -19,7 +19,8 @@ package utils is
 
     type type_control_mem is record
     -- TODO
-        placeholder: std_logic;
+        mem_read: std_logic;
+        mem_write: std_logic;
     end record type_control_mem;
 
 
