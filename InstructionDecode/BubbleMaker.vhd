@@ -22,4 +22,14 @@ end BubbleMaker;
 
 architecture BubbleMaker_bhv of BubbleMaker is
 begin
+    process (bubble_select, control_in_ex, control_in_mem, control_in_wb)
+    begin
+        if bubble_select = '1' then
+            control_out_ex <= control_in_ex;
+            control_out_wb <= control_in_wb;
+            control_out_mem <= control_in_mem;
+        else
+            -- TODO: reset registers
+        end if;
+    end process;
 end BubbleMaker_bhv;
