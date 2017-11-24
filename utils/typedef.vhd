@@ -13,7 +13,9 @@ package utils is
 
     type type_control_ex is record
     -- TODO
-        placeholder: std_logic;
+        alu_op: std_logic_vector(2 downto 0);
+        alu_src: std_logic;
+        reg_dst: std_logic_vector(1 downto 0);
     end record type_control_ex;
 
 
