@@ -103,13 +103,20 @@ architecture InstructionDecode_bhv of InstructionDecode is
         );
     end component;
 
-    signal ex_after_control, ex_after_bubble_maker: type_control_ex;
-    signal mem_after_control, mem_after_bubble_maker: type_control_mem;
-    signal wb_after_control, wb_after_bubble_maker: type_control_wb;
+    signal ex_after_control: type_control_ex;
+    signal mem_after_control: type_control_mem;
+    signal wb_after_control: type_control_wb;
 
     signal branch_op: std_logic_vector(4 downto 0);
     signal zero_flag: std_logic;
-    signal rx_comparer: std_logic_vector(15 downto 0);
+
+    signal lock_rx, lock_ry, lock_rz: std_logic_vector(2 downto 0);
+    signal lock_rx_val, lock_ry_val: std_logic_vector(15 downto 0);
+    signal lock_immediate: std_logic_vector(15 downto 0);
+
+    signal lock_control_out_ex: type_control_ex;
+    signal lock_control_out_mem: type_control_mem;
+    signal lock_control_out_wb: type_control_wb;
 
 begin
     registers_entity: Registers
@@ -124,7 +131,7 @@ begin
             register_from_write_back => register_from_write_back,
             data_from_write_back => data_from_write_back,
             control_reg_write => reg_write,
-            rx_val => rx_comparer, ry_val => ry_val
+            rx_val => lock_rx_val, ry_val => lock_ry_val
         );
 
     controller: Control
@@ -144,9 +151,9 @@ begin
             control_in_mem => mem_after_control,
             control_in_wb => wb_after_control,
 
-            control_out_ex => ex_after_bubble_maker,
-            control_out_mem => mem_after_bubble_maker,
-            control_out_wb => wb_after_bubble_maker,
+            control_out_ex => lock_control_out_ex,
+            control_out_mem => lock_control_out_mem,
+            control_out_wb => lock_control_out_wb,
 
             bubble_select => bubble_select
         );
@@ -159,15 +166,38 @@ begin
             pc_select => pc_select
         );
 
-    rx_val <= rx_comparer;
-
-    zero: process(rx_comparer)
+    zero: process(lock_rx_val)
     begin
-        if (rx_comparer = "0000000000000000") then
+        if (lock_rx_val = "0000000000000000") then
             zero_flag <= '0';
         else
             zero_flag <= '1';
         end if;
     end process;
  
+    imm: process(instruction)
+        variable tmp_imm: std_logic_vector(7 downto 0);
+    begin
+        tmp_imm := instruction(7 downto 0);
+        -- TODO: sign extend
+    end process;
+
+    -- update output data
+    process (clk)
+    begin
+        if clk'event and clk = '1' then
+            rx_val <= lock_rx_val;
+            ry_val <= lock_ry_val;
+            rx <= lock_rx;
+            ry <= lock_ry;
+            rz <= lock_rz;
+            immediate <= lock_immediate;
+            control_out_ex <= lock_control_out_ex;
+            control_out_mem <= lock_control_out_mem;
+            control_out_wb <= lock_control_out_wb;
+        end if;
+    end process;
+
+    branch_pc <= pc + lock_immediate;
+
 end InstructionDecode_bhv;
