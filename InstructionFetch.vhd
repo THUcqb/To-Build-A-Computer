@@ -28,6 +28,28 @@ end InstructionFetch;
 
 architecture Behavorial of InstructionFetch is
 
+    component Mux2 is
+        port (
+            i0: in std_logic_vector(15 downto 0);
+            i1: in std_logic_vector(15 downto 0);
+            s: in std_logic;
+
+            o: out std_logic_vector(15 downto 0)
+        );
+    end component Mux2;
+
+    component Memory is
+        port(
+        -- IN
+            control_mem: in type_control_mem;
+            address, write_data: in std_logic_vector(15 downto 0);
+
+        -- OUT
+            pin: out type_ram_pin;
+            data: inout std_logic_vector(15 downto 0)
+        );
+    end component Memory;
+
     -- pc + 1
     signal pc_add1: STD_LOGIC_VECTOR(15 downto 0);
     -- in and out of pc register
@@ -40,29 +62,23 @@ architecture Behavorial of InstructionFetch is
 
 begin
 
-    -- pc register output as ram2 address
-    ram2_addr <= pc_out;
-
     -- pc + 1 as a candidate of next pc, and another is branch_pc
     pc_add1 <= pc_out + 1;
+    
+    pc_mux: Mux2 port map
+    (
+        i0 => pc_add1,
+        i1 => branch_pc,
+        s => pc_select,
+        o => pc_in
+    );
 
-    pcMux: process (branch_pc, pc_add1, pc_select)
-    begin
-
-        case pc_select is
-
-            when '0' =>
-                pc_in <= pc_add1;
-
-            when '1' =>
-                pc_in <= branch_pc;
-
-            when others =>
-                pc_in <= pc_add1;
-
-        end case;
-
-    end process pcMux;
+    ram2: Memory port map
+    (
+        address => pc_out,
+        pin => ram2_pin,
+        data => ram2_data,
+    );
 
     clockUp: process (clk)
     begin
