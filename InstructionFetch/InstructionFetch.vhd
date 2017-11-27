@@ -13,13 +13,16 @@ entity InstructionFetch is
         -- pc value in branch instructions
         branch_pc: in std_logic_vector(15 downto 0);
 
+        -- pc value in jump instructions
+        jump_pc: in std_logic_vector(15 downto 0);
+
         -- address to write an instruction in when executing ASM
         write_address: in std_logic_vector(15 downto 0);
         -- instruction to write when executing ASM
         write_data: in std_logic_vector(15 downto 0);
 
         -- control signals
-        pc_select: in std_logic;
+        pc_select: in std_logic_vector(1 downto 0);
         pc_write: in std_logic;
         if_id_write: in std_logic;
         im_read: in std_logic;
@@ -37,15 +40,17 @@ end InstructionFetch;
 
 architecture Behavorial of InstructionFetch is
 
-    component Mux2 is
+    component Mux4 is
         port (
             i0: in std_logic_vector(15 downto 0);
             i1: in std_logic_vector(15 downto 0);
-            s: in std_logic;
+            i2: in std_logic_vector(15 downto 0);
+            i3: in std_logic_vector(15 downto 0);
+            s: in std_logic_vector(1 downto 0);
 
             o: out std_logic_vector(15 downto 0)
         );
-    end component Mux2;
+    end component Mux4;
 
     component Memory is
         port(
@@ -73,6 +78,8 @@ architecture Behavorial of InstructionFetch is
     constant enabled: std_logic := '0';
     constant disabled: std_logic := '1';
 
+    signal zero_const_16: std_logic_vector(15 downto 0) := (others => '0');
+
 begin
 
     -- pc + 1 as a candidate of next pc, and another is branch_pc
@@ -81,10 +88,12 @@ begin
     -- contruct control signal object
     control_mem <= (im_read, im_write);
     
-    pc_mux: Mux2 port map
+    pc_mux: Mux4 port map
     (
         i0 => pc_add1,
         i1 => branch_pc,
+        i2 => jump_pc,
+        i3 => zero_const_16,
         s => pc_select,
         o => pc_in
     );
