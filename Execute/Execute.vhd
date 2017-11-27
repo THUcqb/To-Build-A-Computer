@@ -206,7 +206,7 @@ begin
     (
         i0 => y_forward_mux_out,
         i1 => immediate,
-        s => control_in_ex.alu_src,
+        s => control_in_ex.ry_src,
         o => alu_input_y
     );
 
