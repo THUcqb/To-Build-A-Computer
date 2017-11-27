@@ -13,14 +13,14 @@ entity Execute is
 
     -- IN
         -- Data (black)
-        rx, ry, rz: in std_logic_vector(2 downto 0);
-        rx_val, ry_val: in std_logic_vector(15 downto 0);
+        rx, ry, rz: in std_logic_vector(3 downto 0);
+        rx_val, ry_val, sp_val, ih_val, t_val, pc: in std_logic_vector(15 downto 0);
         immediate: in std_logic_vector(15 downto 0);
 
         -- Control (blue)
         control_in_ex: in type_control_ex;
-        control_in_mem: out type_control_mem;
-        control_in_wb: out type_control_wb;
+        control_in_mem: in type_control_mem;
+        control_in_wb: in type_control_wb;
 
         -- Forwarding data
         forward_data_from_mem: in std_logic_vector(15 downto 0);
@@ -34,10 +34,13 @@ entity Execute is
         alu_result: out std_logic_vector(15 downto 0);
         write_data: out std_logic_vector(15 downto 0);
         -- register destination
-        id_ex_rd: out std_logic_vector(2 downto 0);
-        ex_mem_rd: out std_logic_vector(2 downto 0);
+        id_ex_rd: out std_logic_vector(3 downto 0);
+        ex_mem_rd: out std_logic_vector(3 downto 0);
+        -- forwarding source
+        forwarding_rx: out std_logic_vector(3 downto 0);
 
         -- control
+        zero_flag: out std_logic;
         control_out_mem: out type_control_mem;
         control_out_wb: out type_control_wb
 
@@ -65,15 +68,6 @@ architecture Execute_beh of Execute is
             vf : out std_logic
         );
     end component ALU;
-    
-    component ALUControl is
-        port (
-            alu_op: in std_logic_vector(1 downto 0);
-            func: in std_logic_vector(4 downto 0);
-            
-            op: out std_logic_vector(3 downto 0);
-        );
-    end component ALUControl;
 
     component Mux2 is
         port (
@@ -85,16 +79,57 @@ architecture Execute_beh of Execute is
         );
     end component Mux2;
 
-    component Mux3 is
+    component Mux4 is
         port (
             i0: in std_logic_vector(15 downto 0);
             i1: in std_logic_vector(15 downto 0);
             i2: in std_logic_vector(15 downto 0);
+            i3: in std_logic_vector(15 downto 0);
             s: in std_logic_vector(1 downto 0);
 
             o: out std_logic_vector(15 downto 0)
         );
-    end component Mux3;
+    end component Mux4;
+
+    component Mux8 is
+        port (
+            i0: in std_logic_vector(15 downto 0);
+            i1: in std_logic_vector(15 downto 0);
+            i2: in std_logic_vector(15 downto 0);
+            i3: in std_logic_vector(15 downto 0);
+            i4: in std_logic_vector(15 downto 0);
+            i5: in std_logic_vector(15 downto 0);
+            i6: in std_logic_vector(15 downto 0);
+            i7: in std_logic_vector(15 downto 0);
+            s: in std_logic_vector(2 downto 0);
+
+            o: out std_logic_vector(15 downto 0)
+        );
+    end component Mux8;
+
+    component Mux8_4bit is
+        port (
+            i0: in std_logic_vector(3 downto 0);
+            i1: in std_logic_vector(3 downto 0);
+            i2: in std_logic_vector(3 downto 0);
+            i3: in std_logic_vector(3 downto 0);
+            i4: in std_logic_vector(3 downto 0);
+            i5: in std_logic_vector(3 downto 0);
+            i6: in std_logic_vector(3 downto 0);
+            i7: in std_logic_vector(3 downto 0);
+            s: in std_logic_vector(2 downto 0);
+
+            o: out std_logic_vector(3 downto 0)
+        );
+    end component Mux8_4bit;
+
+    signal zero_const_16: std_logic_vector(15 downto 0) := (others => '0');
+    signal zero_const_4: std_logic_vector(3 downto 0) := (others => '0');
+
+    signal t_rank: std_logic_vector(3 downto 0) := "1000";
+    signal sp_rank: std_logic_vector(3 downto 0) := "1001";
+    signal ih_rank: std_logic_vector(3 downto 0) := "1010";
+    signal pc_rank: std_logic_vector(3 downto 0) := "1011";
 
     signal alu_input_x: std_logic_vector(15 downto 0);
     signal alu_input_y: std_logic_vector(15 downto 0);
@@ -103,30 +138,47 @@ architecture Execute_beh of Execute is
     signal op: std_logic_vector(3 downto 0);
     signal cf, zf, sf, vf: std_logic;
 
+    signal id_ex_rd_tmp: std_logic_vector(3 downto 0);
     signal y_forward_mux_out: std_logic_vector(15 downto 0);
-    signal rd_mux_out: std_logic_vector(15 downto 0);
+    signal x_src_mux_out: std_logic_vector(15 downto 0);
 
 begin
 
     control_out_mem <= control_in_mem;
     control_out_wb <= control_in_wb;
 
-    id_ex_rd <= rd_mux_out(2 downto 0);
+    id_ex_rd <= id_ex_rd_tmp;
 
-    x_forward_mux: Mux3 port map
+    x_src_mux: Mux8 port map
     (
         i0 => rx_val,
+        i1 => sp_val,
+        i2 => ih_val,
+        i3 => pc,
+        i4 => t_val,
+        i5 => zero_const_16,
+        i6 => zero_const_16,
+        i7 => zero_const_16,
+        s => control_in_ex.rx_src,
+        o => x_src_mux_out
+    );
+
+    x_forward_mux: Mux4 port map
+    (
+        i0 => x_src_mux_out,
         i1 => forward_data_from_wb,
         i2 => forward_data_from_mem,
+        i3 => zero_const_16,
         s => forward_control_x,
         o => alu_input_x
     );
 
-    y_forward_mux: Mux3 port map
+    y_forward_mux: Mux4 port map
     (
         i0 => ry_val,
         i1 => forward_data_from_wb,
         i2 => forward_data_from_mem,
+        i3 => zero_const_16,
         s => forward_control_y,
         o => y_forward_mux_out
     );
@@ -139,29 +191,52 @@ begin
         o => alu_input_y
     );
 
-    rd_mux: Mux3 port map
+    rd_mux: Mux8_4bit port map
     (
-        i0 => std_logic_vector(resize(unsigned(rx), 16)),
-        i1 => std_logic_vector(resize(unsigned(ry), 16)),
-        i2 => std_logic_vector(resize(unsigned(rz), 16)),
+        i0 => rx,
+        i1 => ry,
+        i2 => rz,
+        i3 => sp_rank,
+        i4 => ih_rank,
+        i5 => zero_const_4,
+        i6 => zero_const_4,
+        i7 => zero_const_4,
         s => control_in_ex.reg_dst,
-        o => rd_mux_out
+        o => id_ex_rd_tmp
     );
 
-    alu: ALU port map
+    x_rank_mux: Mux8_4bit port map
+    (
+        i0 => rx,
+        i1 => sp_rank,
+        i2 => ih_rank,
+        i3 => pc_rank,
+        i4 => t_rank,
+        i5 => zero_const_4,
+        i6 => zero_const_4,
+        i7 => zero_const_4,
+        s => control_in_ex.rx_src,
+        o => forwarding_rx
+    );
+
+    alu_component: ALU port map
     (
         input_x => alu_input_x, input_y => alu_input_y,
-        op => op,
+        op => control_in_ex.alu_op,
         alu_result => alu_result_before_reg,
         cf => cf, zf => zf, sf => sf, vf => vf
     );
-    
-    alu_control: ALUControl port map
-    (
-        alu_op => control_in_ex.alu_op,
-        func => immediate(4 downto 0),
-        op => op
-    );
+
+    compZero: process(x_src_mux_out)
+    begin
+
+        if (x_src_mux_out = "0000000000000000") then
+            zero_flag <= '1';
+        else
+            zero_flag <= '0';
+        end if;
+
+    end process compZero;
 
     clockUp: process(clk)
     begin
@@ -169,7 +244,7 @@ begin
         if (clk'event and clk = '1') then
             alu_result <= alu_result_before_reg;
             write_data <= y_forward_mux_out;
-            ex_mem_rd <= rd_mux_out(2 downto 0);
+            ex_mem_rd <= id_ex_rd_tmp;
         end if;
 
     end process clockUp;

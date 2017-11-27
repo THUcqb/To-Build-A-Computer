@@ -19,7 +19,7 @@ entity Mux8 is
     );
 end Mux8;
 
-architecture Mux4_beh of Mux4 is
+architecture Mux8_beh of Mux8 is
 
 begin
 
@@ -34,4 +34,4 @@ begin
         i7 when "111",
         i0 when others;
 
-end Mux4_beh;
+end Mux8_beh;
