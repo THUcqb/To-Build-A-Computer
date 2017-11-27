@@ -14,7 +14,8 @@ entity Control is
         control_out_mem: out type_control_mem;
         control_out_wb: out type_control_wb;
 
-        branch_op: out std_logic_vector(4 downto 0)
+        id_branch: out std_logic;
+        imm_chooser: out std_logic_vector(2 downto 0)
     );
 end Control;
 

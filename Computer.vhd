@@ -65,15 +65,17 @@ architecture Computer_beh of Computer is
     end component InstructionFetch;
 
     component InstructionDecode is
-        generic (
+        generic
+        (
             delay: time
-        )
-        port (
+        );
+        port
+        (
             clk: in std_logic;
 
         -- IN
             -- From IF stage
-            pc: in std_logic_vector(15 downto 0);
+            if_pc: in std_logic_vector(15 downto 0);
             instruction: in std_logic_vector(15 downto 0);
 
             -- From Hazard control
@@ -88,16 +90,21 @@ architecture Computer_beh of Computer is
             -- Register file
             rx, ry, rz: out std_logic_vector(2 downto 0);
             rx_val, ry_val: out std_logic_vector(15 downto 0);
+            reg_t_val, reg_sp_val, reg_ih_val: out std_logic_vector(15 downto 0);
+            id_pc: out std_logic_vector(15 downto 0);
+
             -- IMM
             immediate: out std_logic_vector(15 downto 0);
 
             -- Control
             pc_select: out std_logic;
-            branch_pc: out std_logic_vector(15 downto 0);
 
             control_out_ex: out type_control_ex;
             control_out_mem: out type_control_mem;
             control_out_wb: out type_control_wb
+
+            -- Hazard detection
+            id_branch: out std_logic
         );
     end component InstructionDecode;
 

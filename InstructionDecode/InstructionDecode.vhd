@@ -1,7 +1,7 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+library ieee;
+use ieee.std_logic_1164.ALL;
+use ieee.std_logic_arith.ALL;
+use ieee.std_logic_unsigned.ALL;
 use work.utils.all;
 
 entity InstructionDecode is
@@ -13,46 +13,40 @@ entity InstructionDecode is
 
     -- IN
         -- From IF stage
-        pc: in std_logic_vector(15 downto 0);
+        if_pc: in std_logic_vector(15 downto 0);
         instruction: in std_logic_vector(15 downto 0);
 
         -- From Hazard control
         bubble_select: in std_logic;
 
         -- From write back
-        register_from_write_back: in std_logic_vector(2 downto 0);
+        register_from_write_back: in std_logic_vector(3 downto 0);
         data_from_write_back: in std_logic_vector(15 downto 0);
         reg_write: in std_logic;
 
     -- OUT
         -- Register file
-        rx, ry, rz: out std_logic_vector(2 downto 0);
+        rx, ry, rz: out std_logic_vector(3 downto 0);
         rx_val, ry_val: out std_logic_vector(15 downto 0);
+        reg_t_val, reg_sp_val, reg_ih_val: out std_logic_vector(15 downto 0);
+        id_pc: out std_logic_vector(15 downto 0);
+
         -- IMM
         immediate: out std_logic_vector(15 downto 0);
 
         -- Control
         pc_select: out std_logic;
-        branch_pc: out std_logic_vector(15 downto 0);
 
         control_out_ex: out type_control_ex;
         control_out_mem: out type_control_mem;
-        control_out_wb: out type_control_wb
+        control_out_wb: out type_control_wb;
+
+        -- Hazard detection
+        id_branch: out std_logic
     );
 end InstructionDecode;
 
 architecture InstructionDecode_bhv of InstructionDecode is
-    component BranchControl is
-        port (
-        -- IN
-            branch_op: in std_logic_vector(4 downto 0);
-            zero_flag: in std_logic;
-
-        -- OUT
-            pc_select: out std_logic
-        );
-    end component;
-
     component BubbleMaker is
         port (
         -- IN
@@ -79,7 +73,8 @@ architecture InstructionDecode_bhv of InstructionDecode is
             control_out_mem: out type_control_mem;
             control_out_wb: out type_control_wb;
 
-            branch_op: out std_logic_vector(4 downto 0)
+            id_branch: out std_logic;
+            imm_chooser: out std_logic_vector(2 downto 0)
         );
     end component;
 
@@ -91,15 +86,34 @@ architecture InstructionDecode_bhv of InstructionDecode is
             clk: in std_logic;
             
         -- IN
-            rx, ry: in std_logic_vector(2 downto 0);
-            register_from_write_back: in std_logic_vector(2 downto 0);
+            rx, ry: in std_logic_vector(3 downto 0);
+            register_from_write_back: in std_logic_vector(3 downto 0);
             data_from_write_back: in std_logic_vector(15 downto 0);
 
             control_reg_write: in std_logic;
 
         -- OUT
             rx_val: out std_logic_vector(15 downto 0);
-            ry_val: out std_logic_vector(15 downto 0)
+            ry_val: out std_logic_vector(15 downto 0);
+            reg_t_val: out std_logic_vector(15 downto 0);
+            reg_sp_val: out std_logic_vector(15 downto 0);
+            reg_ih_val: out std_logic_vector(15 downto 0)
+        );
+    end component;
+
+    component Mux8 is
+        port (
+            i0: in std_logic_vector(15 downto 0);
+            i1: in std_logic_vector(15 downto 0);
+            i2: in std_logic_vector(15 downto 0);
+            i3: in std_logic_vector(15 downto 0);
+            i4: in std_logic_vector(15 downto 0);
+            i5: in std_logic_vector(15 downto 0);
+            i6: in std_logic_vector(15 downto 0);
+            i7: in std_logic_vector(15 downto 0);
+            s: in std_logic_vector(2 downto 0);
+
+            o: out std_logic_vector(15 downto 0)
         );
     end component;
 
@@ -107,16 +121,17 @@ architecture InstructionDecode_bhv of InstructionDecode is
     signal mem_after_control: type_control_mem;
     signal wb_after_control: type_control_wb;
 
-    signal branch_op: std_logic_vector(4 downto 0);
-    signal zero_flag: std_logic;
-
-    signal lock_rx, lock_ry, lock_rz: std_logic_vector(2 downto 0);
-    signal lock_rx_val, lock_ry_val: std_logic_vector(15 downto 0);
+    signal lock_rx, lock_ry, lock_rz: std_logic_vector(3 downto 0);
+    signal lock_rx_val, lock_ry_val, lock_reg_t_val, lock_reg_sp_val, lock_reg_ih_val: std_logic_vector(15 downto 0);
+    signal lock_pc: std_logic_vector(15 downto 0);
     signal lock_immediate: std_logic_vector(15 downto 0);
 
     signal lock_control_out_ex: type_control_ex;
     signal lock_control_out_mem: type_control_mem;
     signal lock_control_out_wb: type_control_wb;
+
+    signal imm_chooser: std_logic_vector(2 downto 0);
+    signal i0, i1, i2, i3, i4, i5, i6, i7: std_logic_vector(15 downto 0);
 
 begin
     registers_entity: Registers
@@ -127,11 +142,12 @@ begin
         port map
         (
             clk => clk,
-            rx => instruction(10 downto 8), ry => instruction(7 downto 5),
+            rx => lock_rx, ry => lock_ry,
             register_from_write_back => register_from_write_back,
             data_from_write_back => data_from_write_back,
             control_reg_write => reg_write,
-            rx_val => lock_rx_val, ry_val => lock_ry_val
+            rx_val => lock_rx_val, ry_val => lock_ry_val,
+            reg_t_val => lock_reg_t_val, reg_sp_val => lock_reg_sp_val, reg_ih_val => lock_reg_ih_val
         );
 
     controller: Control
@@ -141,7 +157,8 @@ begin
             control_out_wb => wb_after_control,
             control_out_ex => ex_after_control,
             control_out_mem => mem_after_control,
-            branch_op => branch_op
+            id_branch => id_branch,
+            imm_chooser => imm_chooser
         );
 
     bubble_maker: BubbleMaker
@@ -158,29 +175,34 @@ begin
             bubble_select => bubble_select
         );
 
-    branch_control: BranchControl
+    imm: Mux8
         port map
         (
-            branch_op => branch_op,
-            zero_flag => zero_flag,
-            pc_select => pc_select
+            i0 => i0,
+            i1 => i1,
+            i2 => i2,
+            i3 => i3,
+            i4 => i4,
+            i5 => i5,
+            i6 => i6,
+            i7 => i7,
+            s => imm_chooser,
+            o => lock_immediate
         );
-
-    zero: process(lock_rx_val)
-    begin
-        if (lock_rx_val = "0000000000000000") then
-            zero_flag <= '0';
-        else
-            zero_flag <= '1';
-        end if;
-    end process;
  
-    imm: process(instruction)
-        variable tmp_imm: std_logic_vector(7 downto 0);
-    begin
-        tmp_imm := instruction(7 downto 0);
-        -- TODO: sign extend
-    end process;
+    i0 <= sxt(instruction(7 downto 0), 16);
+    i1 <= sxt(instruction(10 downto 0), 16);
+    i2 <= ext(instruction(4 downto 2), 16);
+    i3 <= sxt(instruction(3 downto 0), 16);
+    i4 <= ext(instruction(7 downto 0), 16);
+    i5 <= sxt(instruction(4 downto 0), 16);
+    i6 <= (others => '0');
+    i7 <= (others => '1');
+
+    lock_pc <= if_pc;
+    lock_rx <= "0" & instruction(10 downto 8);
+    lock_ry <= "0" & instruction(7 downto 5);
+    lock_rz <= "0" & instruction(4 downto 2);
 
     -- update output data
     process (clk)
@@ -195,9 +217,12 @@ begin
             control_out_ex <= lock_control_out_ex;
             control_out_mem <= lock_control_out_mem;
             control_out_wb <= lock_control_out_wb;
+            id_pc <= lock_pc;
+
+            reg_ih_val <= lock_reg_ih_val;
+            reg_t_val <= lock_reg_t_val;
+            reg_sp_val <= lock_reg_sp_val;
         end if;
     end process;
-
-    branch_pc <= pc + lock_immediate;
 
 end InstructionDecode_bhv;
