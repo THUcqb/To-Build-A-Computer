@@ -43,7 +43,7 @@ entity Execute is
         jump_pc: out std_logic_vector(15 downto 0);
 
         -- control
-        pc_select: out std_logic;
+        pc_select: out std_logic_vector(1 downto 0);
         control_out_mem: out type_control_mem;
         control_out_wb: out type_control_wb
 
@@ -55,11 +55,11 @@ architecture Execute_beh of Execute is
     component BranchControl is
         port (
         -- IN
-            branch_op: in std_logic_vector(1 downto 0);
+            branch_op: in std_logic_vector(2 downto 0);
             zero_flag: in std_logic;
 
         -- OUT
-            pc_select: out std_logic
+            pc_select: out std_logic_vector(1 downto 0)
         );
     end component BranchControl;
 

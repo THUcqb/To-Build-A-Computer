@@ -40,6 +40,16 @@ end InstructionFetch;
 
 architecture Behavorial of InstructionFetch is
 
+    component Mux2 is
+        port (
+            i0: in std_logic_vector(15 downto 0);
+            i1: in std_logic_vector(15 downto 0);
+            s: in std_logic;
+
+            o: out std_logic_vector(15 downto 0)
+        );
+    end component Mux2;
+
     component Mux4 is
         port (
             i0: in std_logic_vector(15 downto 0);
