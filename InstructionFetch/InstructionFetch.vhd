@@ -3,25 +3,34 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
+use work.utils.all;
+
 entity InstructionFetch is
     Port (
         -- clock
-        clk: in STD_LOGIC;
+        clk: in std_logic;
 
         -- pc value in branch instructions
-        branch_pc: in STD_LOGIC_VECTOR(15 downto 0);
+        branch_pc: in std_logic_vector(15 downto 0);
+
+        -- address to write an instruction in when executing ASM
+        write_address: in std_logic_vector(15 downto 0);
+        -- instruction to write when executing ASM
+        write_data: in std_logic_vector(15 downto 0);
 
         -- control signals
-        pc_select: in STD_LOGIC;
-        pc_write: in STD_LOGIC;
-        if_id_write: in STD_LOGIC;
+        pc_select: in std_logic;
+        pc_write: in std_logic;
+        if_id_write: in std_logic;
+        im_read: in std_logic;
+        im_write: in std_logic;
 
         -- stage register outputs
-        pc: out STD_LOGIC_VECTOR(15 downto 0);
-        instruction: out STD_LOGIC_VECTOR(15 downto 0);
+        pc: out std_logic_vector(15 downto 0);
+        instruction: out std_logic_vector(15 downto 0);
 
         -- data and address cable of instruction memory
-        ram2_data: inout STD_LOGIC_VECTOR(15 downto 0);
+        ram2_data: inout std_logic_vector(15 downto 0);
         ram2_pin: out type_ram_pin
     );
 end InstructionFetch;
@@ -51,19 +60,26 @@ architecture Behavorial of InstructionFetch is
     end component Memory;
 
     -- pc + 1
-    signal pc_add1: STD_LOGIC_VECTOR(15 downto 0);
+    signal pc_add1: std_logic_vector(15 downto 0);
     -- in and out of pc register
-    signal pc_in: STD_LOGIC_VECTOR(15 downto 0);
-    signal pc_out: STD_LOGIC_VECTOR(15 downto 0);
+    signal pc_in: std_logic_vector(15 downto 0);
+    signal pc_out: std_logic_vector(15 downto 0);
+    signal address: std_logic_vector(15 downto 0);
+
+    -- control signal of ram2
+    signal control_mem: type_control_mem;
 
     -- constants: enabled/disabled
-    constant enabled: STD_LOGIC := '0';
-    constant disabled: STD_LOGIC := '1';
+    constant enabled: std_logic := '0';
+    constant disabled: std_logic := '1';
 
 begin
 
     -- pc + 1 as a candidate of next pc, and another is branch_pc
     pc_add1 <= pc_out + 1;
+
+    -- contruct control signal object
+    control_mem <= (im_read, im_write);
     
     pc_mux: Mux2 port map
     (
@@ -73,11 +89,21 @@ begin
         o => pc_in
     );
 
+    address_mux: Mux2 port map
+    (
+        i0 => pc_out,
+        i1 => write_address,
+        s => im_write,
+        o => address
+    );
+
     ram2: Memory port map
     (
-        address => pc_out,
+        control_mem => control_mem,
+        address => address,
+        write_data => write_data,
         pin => ram2_pin,
-        data => ram2_data,
+        data => ram2_data
     );
 
     clockUp: process (clk)
