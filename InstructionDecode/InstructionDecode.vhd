@@ -66,7 +66,7 @@ architecture InstructionDecode_bhv of InstructionDecode is
     component Control is
         port (
         -- IN
-            op: in std_logic_vector(4 downto 0);
+            op: in std_logic_vector(15 downto 0);
 
         -- OUT
             control_out_ex: out type_control_ex;
@@ -153,7 +153,7 @@ begin
     controller: Control
         port map
         (
-            op => instruction(15 downto 11),
+            op => instruction,
             control_out_wb => wb_after_control,
             control_out_ex => ex_after_control,
             control_out_mem => mem_after_control,
