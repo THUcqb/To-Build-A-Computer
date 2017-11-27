@@ -12,25 +12,24 @@ package utils is
 
 
     type type_control_ex is record
-    -- TODO
-        alu_op: std_logic_vector(2 downto 0);
-        alu_src: std_logic;
-        reg_dst: std_logic_vector(1 downto 0);
-        rx_src: std_logic_vector(2 downto 0);
         branch_op: std_logic_vector(1 downto 0);
+        rx_src: std_logic_vector(2 downto 0);
+        ry_src: std_logic;
+        reg_dst: std_logic_vector(2 downto 0);
+        alu_op: std_logic_vector(3 downto 0);
+        branch: std_logic;
     end record type_control_ex;
 
 
     type type_control_mem is record
-    -- TODO
         mem_read: std_logic;
         mem_write: std_logic;
     end record type_control_mem;
 
 
     type type_control_wb is record
-    -- TODO
-        placeholder: std_logic;
+        mem_to_reg: std_logic;
+        reg_write: std_logic;
     end record type_control_wb;
 
 end package utils;
