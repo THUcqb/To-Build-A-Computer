@@ -29,7 +29,18 @@ begin
             control_out_wb <= control_in_wb;
             control_out_mem <= control_in_mem;
         else
-            -- TODO: reset registers
-        end if;
-    end process;
+            control_out_ex.branch_op <= "000";
+            control_out_ex.rx_src <= "000";
+            control_out_ex.ry_src <= '0';
+            control_out_ex.reg_dst <= "000";
+            control_out_ex.alu_op <= "0000";
+            control_out_ex.branch <= '0';
+
+            control_out_mem.mem_read <= '0';
+            control_out_mem.mem_write <= '0';
+
+            control_out_wb.mem_to_reg <= '1';
+            control_out_wb.reg_write <= '0';
+    end if;
+end process;
 end BubbleMaker_bhv;
