@@ -12,7 +12,7 @@ package utils is
 
 
     type type_control_ex is record
-        branch_op: std_logic_vector(1 downto 0);
+        branch_op: std_logic_vector(2 downto 0);
         rx_src: std_logic_vector(2 downto 0);
         ry_src: std_logic;
         reg_dst: std_logic_vector(2 downto 0);
