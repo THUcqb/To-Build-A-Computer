@@ -38,6 +38,9 @@ entity Execute is
         ex_mem_rd: out std_logic_vector(3 downto 0);
         -- forwarding source
         forwarding_rx: out std_logic_vector(3 downto 0);
+        -- pc in branch and jump
+        branch_pc: out std_logic_vector(15 downto 0);
+        jump_pc: out std_logic_vector(15 downto 0);
 
         -- control
         pc_select: out std_logic;
@@ -162,6 +165,9 @@ begin
 
     id_ex_rd <= id_ex_rd_tmp;
 
+    branch_pc <= pc + immediate;
+    jump_pc <= alu_result_before_reg;
+
     x_src_mux: Mux8 port map
     (
         i0 => rx_val,
@@ -211,7 +217,7 @@ begin
         i2 => rz,
         i3 => sp_rank,
         i4 => ih_rank,
-        i5 => zero_const_4,
+        i5 => t_rank,
         i6 => zero_const_4,
         i7 => zero_const_4,
         s => control_in_ex.reg_dst,
