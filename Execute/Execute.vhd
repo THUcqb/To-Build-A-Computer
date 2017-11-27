@@ -40,7 +40,7 @@ entity Execute is
         forwarding_rx: out std_logic_vector(3 downto 0);
 
         -- control
-        zero_flag: out std_logic;
+        pc_select: out std_logic;
         control_out_mem: out type_control_mem;
         control_out_wb: out type_control_wb
 
@@ -48,6 +48,17 @@ entity Execute is
 end entity Execute;
 
 architecture Execute_beh of Execute is
+
+    component BranchControl is
+        port (
+        -- IN
+            branch_op: in std_logic_vector(1 downto 0);
+            zero_flag: in std_logic;
+
+        -- OUT
+            pc_select: out std_logic
+        );
+    end component BranchControl;
 
     component ALU is
         port (
@@ -138,6 +149,8 @@ architecture Execute_beh of Execute is
     signal op: std_logic_vector(3 downto 0);
     signal cf, zf, sf, vf: std_logic;
 
+    signal zero_flag: std_logic;
+
     signal id_ex_rd_tmp: std_logic_vector(3 downto 0);
     signal y_forward_mux_out: std_logic_vector(15 downto 0);
     signal x_src_mux_out: std_logic_vector(15 downto 0);
@@ -217,6 +230,13 @@ begin
         i7 => zero_const_4,
         s => control_in_ex.rx_src,
         o => forwarding_rx
+    );
+
+    branch_control_component: BranchControl port map
+    (
+        branch_op => control_in_ex.branch_op,
+        zero_flag => zero_flag,
+        pc_select => pc_select
     );
 
     alu_component: ALU port map
