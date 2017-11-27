@@ -41,7 +41,7 @@ begin
             bubble_select <= '1';
             pc_write <= '0';
             if_id_write <= '0';
-        elsif (id_ex_control_ex.id_ex_branch = '1') then
+        elsif (id_ex_control_ex.branch = '1') then
             bubble_select <= '1';
             pc_write <= '1';
             if_id_write <= '1';
