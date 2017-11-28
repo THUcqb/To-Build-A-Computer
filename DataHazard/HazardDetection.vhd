@@ -9,9 +9,9 @@ entity HazardDetection is
     port(
     -- IN
         -- for load: register src and dest
-        if_id_rx: in std_logic_vector(2 downto 0);
-        if_id_ry: in std_logic_vector(2 downto 0);
-        id_ex_rd: in std_logic_vector(2 downto 0);
+        if_id_rx: in std_logic_vector(3 downto 0);
+        if_id_ry: in std_logic_vector(3 downto 0);
+        id_ex_rd: in std_logic_vector(3 downto 0);
         -- mem_read for load and mem_write for sw
         id_ex_control_mem: in type_control_mem;
         -- for branch

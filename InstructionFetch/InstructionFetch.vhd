@@ -6,7 +6,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use work.utils.all;
 
 entity InstructionFetch is
-    Port (
+    port (
         -- clock
         clk: in std_logic;
 

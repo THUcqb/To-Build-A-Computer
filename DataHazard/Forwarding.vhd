@@ -6,10 +6,10 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity Forwarding is
     port(
         -- IN
-        id_ex_rx: in std_logic_vector(2 downto 0);
-        id_ex_ry: in std_logic_vector(2 downto 0);
-        ex_mem_rd: in std_logic_vector(2 downto 0);
-        mem_wb_rd: in std_logic_vector(2 downto 0);
+        id_ex_rx: in std_logic_vector(3 downto 0);
+        id_ex_ry: in std_logic_vector(3 downto 0);
+        ex_mem_rd: in std_logic_vector(3 downto 0);
+        mem_wb_rd: in std_logic_vector(3 downto 0);
         control_ex_mem_wb: in type_control_wb;
         control_mem_wb_wb: in type_control_wb;
 

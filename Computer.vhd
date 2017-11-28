@@ -47,17 +47,25 @@ architecture Computer_beh of Computer is
             -- pc value in branch instructions
             branch_pc: in std_logic_vector(15 downto 0);
 
+            -- pc value in jump instructions
+            jump_pc: in std_logic_vector(15 downto 0);
+
+            -- address to write an instruction in when executing ASM
+            write_address: in std_logic_vector(15 downto 0);
+            -- instruction to write when executing ASM
+            write_data: in std_logic_vector(15 downto 0);
+
             -- control signals
-            pc_select: in std_logic;
+            pc_select: in std_logic_vector(1 downto 0);
             pc_write: in std_logic;
             if_id_write: in std_logic;
+            im_read: in std_logic;
+            im_write: in std_logic;
 
             -- stage register outputs
             pc: out std_logic_vector(15 downto 0);
             instruction: out std_logic_vector(15 downto 0);
 
-
-            -- Device pin
             -- data and address cable of instruction memory
             ram2_data: inout std_logic_vector(15 downto 0);
             ram2_pin: out type_ram_pin
@@ -101,7 +109,7 @@ architecture Computer_beh of Computer is
 
             control_out_ex: out type_control_ex;
             control_out_mem: out type_control_mem;
-            control_out_wb: out type_control_wb
+            control_out_wb: out type_control_wb;
 
             -- Hazard detection
             id_branch: out std_logic
@@ -115,14 +123,14 @@ architecture Computer_beh of Computer is
 
         -- IN
             -- Data (black)
-            rx, ry, rz: in std_logic_vector(2 downto 0);
-            rx_val, ry_val: in std_logic_vector(15 downto 0);
+            rx, ry, rz: in std_logic_vector(3 downto 0);
+            rx_val, ry_val, sp_val, ih_val, t_val, pc: in std_logic_vector(15 downto 0);
             immediate: in std_logic_vector(15 downto 0);
 
             -- Control (blue)
             control_in_ex: in type_control_ex;
-            control_in_mem: out type_control_mem;
-            control_in_wb: out type_control_wb;
+            control_in_mem: in type_control_mem;
+            control_in_wb: in type_control_wb;
 
             -- Forwarding data
             forward_data_from_mem: in std_logic_vector(15 downto 0);
@@ -136,17 +144,23 @@ architecture Computer_beh of Computer is
             alu_result: out std_logic_vector(15 downto 0);
             write_data: out std_logic_vector(15 downto 0);
             -- register destination
-            id_ex_rd: out std_logic_vector(2 downto 0);
-            ex_mem_rd: out std_logic_vector(2 downto 0);
+            id_ex_rd: out std_logic_vector(3 downto 0);
+            ex_mem_rd: out std_logic_vector(3 downto 0);
+            -- forwarding source
+            forwarding_rx: out std_logic_vector(3 downto 0);
+            -- pc in branch and jump
+            branch_pc: out std_logic_vector(15 downto 0);
+            jump_pc: out std_logic_vector(15 downto 0);
 
             -- control
+            pc_select: out std_logic_vector(1 downto 0);
             control_out_mem: out type_control_mem;
             control_out_wb: out type_control_wb
 
         );
     end component Execute;
 
-    component Memory is
+    component MemoryAndWriteBack is
         port(
         -- clock
             clk: in std_logic;
@@ -172,20 +186,20 @@ architecture Computer_beh of Computer is
             --
             mem_wb_rd: out std_logic_vector(2 downto 0);
             -- Control
-            control_out_wb: out type_control_wb
+            control_out_wb: out type_control_wb;
             -- Device
             ram1_data: inout std_logic_vector(15 downto 0);
             ram1_pin: out type_ram_pin
         );
-    end component Memory;
+    end component MemoryAndWriteBack;
 
     component Forwarding is
         port(
             -- IN
-            id_ex_rx: in std_logic_vector(2 downto 0);
-            id_ex_ry: in std_logic_vector(2 downto 0);
-            ex_mem_rd: in std_logic_vector(2 downto 0);
-            mem_wb_rd: in std_logic_vector(2 downto 0);
+            id_ex_rx: in std_logic_vector(3 downto 0);
+            id_ex_ry: in std_logic_vector(3 downto 0);
+            ex_mem_rd: in std_logic_vector(3 downto 0);
+            mem_wb_rd: in std_logic_vector(3 downto 0);
             control_ex_mem_wb: in type_control_wb;
             control_mem_wb_wb: in type_control_wb;
 
@@ -198,10 +212,18 @@ architecture Computer_beh of Computer is
     component HazardDetection is
         port(
         -- IN
-            if_id_rx: in std_logic_vector(2 downto 0);
-            if_id_ry: in std_logic_vector(2 downto 0);
-            id_ex_rd: in std_logic_vector(2 downto 0);
+            -- for load: register src and dest
+            if_id_rx: in std_logic_vector(3 downto 0);
+            if_id_ry: in std_logic_vector(3 downto 0);
+            id_ex_rd: in std_logic_vector(3 downto 0);
+            -- mem_read for load and mem_write for sw
             id_ex_control_mem: in type_control_mem;
+            -- for branch
+            id_branch: in std_logic;
+            -- id_ex_branch for branch
+            id_ex_control_ex: in type_control_ex;
+            -- for sw
+            write_address: in std_logic_vector(15 downto 0);
 
         -- OUT
             pc_write: out std_logic;
