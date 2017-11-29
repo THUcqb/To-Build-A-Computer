@@ -200,8 +200,8 @@ architecture Computer_beh of Computer is
             id_ex_ry: in std_logic_vector(3 downto 0);
             ex_mem_rd: in std_logic_vector(3 downto 0);
             mem_wb_rd: in std_logic_vector(3 downto 0);
-            control_ex_mem_wb: in type_control_wb;
-            control_mem_wb_wb: in type_control_wb;
+            control_ex_mem_wb: in std_logic;
+            control_mem_wb_wb: in std_logic;
 
             -- OUT
             forward_control_x: out std_logic_vector(1 downto 0);
