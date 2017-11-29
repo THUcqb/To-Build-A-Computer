@@ -116,40 +116,21 @@ begin
                 cf <= '0';
                 vf <= '0';
 
-            -- XOR
+            -- CMP
             when "0100" =>
-                tmp_result := input_x XOR input_y;
-                if (tmp_result = "0000000000000000") then
+                if (input_x = input_y) then
+                    tmp_result := "0000000000000000";
                     zf <= '1';
                 else
+                    tmp_result := "0000000000000001";
                     zf <= '0';
                 end if;
-                if (tmp_result(15) = '1') then
-                    sf <= '1';
-                else
-                    sf <= '0';
-                end if;
-                cf <= '0';
-                vf <= '0';
-
-            -- NOT A
-            when "0101" =>
-                tmp_result := NOT input_x;
-                if (tmp_result = "0000000000000000") then
-                    zf <= '1';
-                else
-                    zf <= '0';
-                end if;
-                if (tmp_result(15) = '1') then
-                    sf <= '1';
-                else
-                    sf <= '0';
-                end if;
+                sf <= '0';
                 cf <= '0';
                 vf <= '0';
 
             -- SLL: A << B
-            when "0110" =>
+            when "0101" =>
                 tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SLL CONV_INTEGER(input_y));
                 if (tmp_result = "0000000000000000") then
                     zf <= '1';
@@ -164,24 +145,8 @@ begin
                 cf <= '0';
                 vf <= '0';
 
-            -- SRL: A >> B
-            when "0111" =>
-                tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SRL CONV_INTEGER(input_y));
-                if (tmp_result = "0000000000000000") then
-                    zf <= '1';
-                else
-                    zf <= '0';
-                end if;
-                if (tmp_result(15) = '1') then
-                    sf <= '1';
-                else
-                    sf <= '0';
-                end if;
-                cf <= '0';
-                vf <= '0';
-
             -- SRA: A >> B
-            when "1000" =>
+            when "0110" =>
                 tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SRA CONV_INTEGER(input_y));
                 if (tmp_result = "0000000000000000") then
                     zf <= '1';
@@ -196,9 +161,51 @@ begin
                 cf <= '0';
                 vf <= '0';
 
-            -- ROL
+            -- SLTU
+            when "0111" =>
+                if (unsigned(input_x) < unsigned(input_y)) then
+                    tmp_result := "0000000000000001";
+                    zf <= '0';
+                else
+                    tmp_result := "0000000000000000";
+                    zf <= '1';
+                end if;
+                sf <= '0';
+                cf <= '0';
+                vf <= '0';
+
+            -- SLT
+            when "1000" =>
+                if (signed(input_x) < signed(input_y)) then
+                    tmp_result := "0000000000000001";
+                    zf <= '0';
+                else
+                    tmp_result := "0000000000000000";
+                    zf <= '1';
+                end if;
+                sf <= '0';
+                cf <= '0';
+                vf <= '0';
+
+            -- return input_x
             when "1001" =>
-                tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) ROL CONV_INTEGER(input_y));
+                tmp_result := input_x;
+                if (tmp_result = "0000000000000000") then
+                    zf <= '1';
+                else
+                    zf <= '0';
+                end if;
+                if (tmp_result(15) = '1') then
+                    sf <= '1';
+                else
+                    sf <= '0';
+                end if;
+                cf <= '0';
+                vf <= '0';
+
+            -- return input_y
+            when "1010" =>
+                tmp_result := input_y;
                 if (tmp_result = "0000000000000000") then
                     zf <= '1';
                 else
@@ -215,7 +222,7 @@ begin
             when others =>
                 tmp_result := "0000000000000000";
                 cf <= '0';
-                zf <= '0';
+                zf <= '1';
                 sf <= '0';
                 vf <= '0';
 
