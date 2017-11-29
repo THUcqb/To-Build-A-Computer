@@ -18,7 +18,7 @@ end BranchControl;
 architecture BranchControl_beh of BranchControl is
 
 begin
-
-
+    -- TODO: remove this placeholder;
+    pc_select <= branch_op(1 downto 0);
 
 end BranchControl_beh;

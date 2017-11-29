@@ -2,6 +2,7 @@ library ieee;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use work.utils.all;
 
 -- This is the implemetation of Memory
 -- Can be both data memory and instruction memory
@@ -21,5 +22,7 @@ end Memory;
 architecture memory_bev of Memory is
 
 begin
+    -- TODO: remove this placeholder
+    data <= write_data;
 
 end memory_bev;
