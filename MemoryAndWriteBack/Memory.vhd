@@ -22,5 +22,7 @@ end Memory;
 architecture memory_bev of Memory is
 
 begin
+    -- TODO: remove this placeholder
+    data <= write_data;
 
 end memory_bev;

@@ -15,7 +15,7 @@ entity MemoryAndWriteBack is
         -- Data
         alu_result: in std_logic_vector(15 downto 0);
         write_data: in std_logic_vector(15 downto 0);
-        ex_mem_rd: in std_logic_vector(2 downto 0);
+        ex_mem_rd: in std_logic_vector(3 downto 0);
 
         -- Control
         control_in_mem: in type_control_mem;
@@ -26,9 +26,11 @@ entity MemoryAndWriteBack is
         -- data
         data_to_write_back: out std_logic_vector(15 downto 0);
         --
-        mem_wb_rd: out std_logic_vector(2 downto 0);
+        mem_wb_rd: out std_logic_vector(3 downto 0);
         -- Control
         control_out_wb: out type_control_wb;
+        im_read: out std_logic;
+        im_write: out std_logic;
 
         -- Device
         ram1_data: inout std_logic_vector(15 downto 0);
