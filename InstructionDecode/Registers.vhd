@@ -2,11 +2,9 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use work.utils.all;
 
 entity Registers is
-    generic (
-        delay: time
-    );
     port (
         clk: in std_logic;
         
@@ -27,12 +25,12 @@ entity Registers is
 end Registers;
 
 architecture Registers_bhv of Registers is
-    type RegisterArray is array (15 downto 0) of std_logic_vector(15 downto 0);
+    type RegisterArray is array (10 downto 0) of std_logic_vector(15 downto 0);
     signal elements: RegisterArray;
 
-    signal index_rx: integer := 0;
-    signal index_ry: integer := 0;
-    signal index_write_back: integer := 0;
+    signal index_rx: integer;
+    signal index_ry: integer;
+    signal index_write_back: integer;
 
     function toIndex(rank: std_logic_vector(3 downto 0)) return integer is
     begin
@@ -48,11 +46,6 @@ architecture Registers_bhv of Registers is
             when "1000" => return 8;
             when "1001" => return 9;
             when "1010" => return 10;
-            when "1011" => return 11;
-            when "1100" => return 12;
-            when "1101" => return 13;
-            when "1110" => return 14;
-            when "1111" => return 15;
             when others => return 0;
         end case;
         return 0;
@@ -67,10 +60,10 @@ begin
     begin
         if clk'event and clk = '1' then
             if (control_reg_write = '1') then
-                elements(index_write_back) <= data_from_write_back after delay;
+                elements(index_write_back) <= data_from_write_back after delay_in_registers;
             end if;
-            rx_val <= elements(index_rx) after delay + delay;
-            ry_val <= elements(index_ry) after delay + delay;
+            rx_val <= elements(index_rx) after delay_in_registers + delay_in_registers;
+            ry_val <= elements(index_ry) after delay_in_registers + delay_in_registers;
             reg_t_val <= elements(8);
             reg_sp_val <= elements(9);
             reg_ih_val <= elements(10);
