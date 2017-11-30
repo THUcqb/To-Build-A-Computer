@@ -32,4 +32,5 @@ package utils is
         reg_write: std_logic;
     end record type_control_wb;
 
+    constant delay_in_registers: time := 5 ns;
 end package utils;

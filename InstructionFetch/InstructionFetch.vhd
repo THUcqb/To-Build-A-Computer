@@ -88,7 +88,7 @@ architecture Behavorial of InstructionFetch is
     constant enabled: std_logic := '0';
     constant disabled: std_logic := '1';
 
-    signal zero_const_16: std_logic_vector(15 downto 0) := (others => '0');
+    constant zero_const_16: std_logic_vector(15 downto 0) := (others => '0');
 
 begin
 

@@ -149,7 +149,6 @@ architecture Execute_beh of Execute is
     signal alu_input_y: std_logic_vector(15 downto 0);
     signal alu_result_before_reg: std_logic_vector(15 downto 0);
 
-    signal op: std_logic_vector(3 downto 0);
     signal cf, zf, sf, vf: std_logic;
 
     signal zero_flag: std_logic;

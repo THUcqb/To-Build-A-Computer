@@ -5,9 +5,6 @@ use ieee.std_logic_unsigned.ALL;
 use work.utils.all;
 
 entity InstructionDecode is
-    generic (
-        delay: time
-    );
     port (
         clk: in std_logic;
 
@@ -33,9 +30,6 @@ entity InstructionDecode is
 
         -- IMM
         immediate: out std_logic_vector(15 downto 0);
-
-        -- Control
-        pc_select: out std_logic;
 
         control_out_ex: out type_control_ex;
         control_out_mem: out type_control_mem;
@@ -79,9 +73,6 @@ architecture InstructionDecode_bhv of InstructionDecode is
     end component;
 
     component Registers is
-        generic (
-            delay: time
-        );
         port (
             clk: in std_logic;
             
@@ -135,10 +126,6 @@ architecture InstructionDecode_bhv of InstructionDecode is
 
 begin
     registers_entity: Registers
-        generic map
-        (
-            delay => delay
-        )
         port map
         (
             clk => clk,

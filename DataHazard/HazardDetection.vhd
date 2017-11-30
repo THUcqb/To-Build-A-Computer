@@ -16,8 +16,8 @@ entity HazardDetection is
         id_ex_control_mem: in type_control_mem;
         -- for branch
         id_branch: in std_logic;
-        -- id_ex_branch for branch
-        id_ex_control_ex: in type_control_ex;
+        -- for branch
+        ex_branch: in std_logic;
         -- for sw
         write_address: in std_logic_vector(15 downto 0);
 
@@ -32,7 +32,7 @@ architecture hazard_detection_beh of HazardDetection is
 
 begin
     process (if_id_rx, if_id_ry, id_ex_rd, id_ex_control_mem,
-        id_branch, id_ex_control_ex, write_address)
+        id_branch, ex_branch, write_address)
     begin
         if (((id_ex_control_mem.mem_read = '1' and
             (if_id_rx = id_ex_rd or if_id_ry = id_ex_rd)))
@@ -41,7 +41,7 @@ begin
             bubble_select <= '1';
             pc_write <= '0';
             if_id_write <= '0';
-        elsif (id_ex_control_ex.branch = '1') then
+        elsif (ex_branch = '1') then
             bubble_select <= '1';
             pc_write <= '1';
             if_id_write <= '1';

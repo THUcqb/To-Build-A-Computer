@@ -7,13 +7,6 @@ use work.utils.all;
 
 entity Computer is
 
-    generic
-    (
-        N: integer := 1;
-        period: time := 20 ns;
-        delay_in_registers: time := 5 ns
-    );
-
     port
     (
         -- clock
@@ -73,10 +66,6 @@ architecture Computer_beh of Computer is
     end component InstructionFetch;
 
     component InstructionDecode is
-        generic
-        (
-            delay: time
-        );
         port
         (
             clk: in std_logic;
@@ -103,9 +92,6 @@ architecture Computer_beh of Computer is
 
             -- IMM
             immediate: out std_logic_vector(15 downto 0);
-
-            -- Control
-            pc_select: out std_logic;
 
             control_out_ex: out type_control_ex;
             control_out_mem: out type_control_mem;
@@ -222,8 +208,8 @@ architecture Computer_beh of Computer is
             id_ex_control_mem: in type_control_mem;
             -- for branch
             id_branch: in std_logic;
-            -- id_ex_branch for branch
-            id_ex_control_ex: in type_control_ex;
+            -- for branch
+            ex_branch: in std_logic;
             -- for sw
             write_address: in std_logic_vector(15 downto 0);
 
@@ -243,12 +229,12 @@ architecture Computer_beh of Computer is
     signal id_reg_t_val, id_reg_sp_val, id_reg_ih_val: std_logic_vector(15 downto 0);
     signal id_pc: std_logic_vector(15 downto 0);
     signal id_immediate: std_logic_vector(15 downto 0);
-    signal id_pc_select: std_logic;
     signal id_control_out_ex: type_control_ex;
     signal id_control_out_mem: type_control_mem;
     signal id_control_out_wb: type_control_wb;
     signal id_branch: std_logic;
     signal id_rx_before_register, id_ry_before_register: std_logic_vector(3 downto 0);
+    signal id_ex_branch: std_logic;
 
     -- EX's outputs
     signal ex_alu_result: std_logic_vector(15 downto 0);
@@ -300,10 +286,6 @@ begin
         );
 
     instruction_decode: InstructionDecode
-        generic map
-        (
-            delay => delay_in_registers
-        )
         port map
         (
             clk => clk,
@@ -318,7 +300,6 @@ begin
             reg_t_val => id_reg_t_val, reg_sp_val => id_reg_sp_val, reg_ih_val => id_reg_ih_val,
             id_pc => id_pc,
             immediate => id_immediate,
-            pc_select => id_pc_select,
             control_out_ex => id_control_out_ex,
             control_out_mem => id_control_out_mem,
             control_out_wb => id_control_out_wb,
@@ -326,6 +307,7 @@ begin
         );
     id_rx_before_register <= "0" & if_instruction(10 downto 8);
     id_ry_before_register <= "0" & if_instruction(7 downto 5);
+    id_ex_branch <= id_control_out_ex.branch;
 
     execute_unit: Execute
         port map
@@ -397,7 +379,7 @@ begin
             id_ex_rd => ex_id_ex_rd,
             id_ex_control_mem => id_control_out_mem,
             id_branch => id_branch,
-            id_ex_control_ex => id_control_out_ex,
+            ex_branch => id_ex_branch,
             write_address => ex_jump_pc,
             pc_write => hazard_pc_write,
             if_id_write => hazard_if_id_write,
