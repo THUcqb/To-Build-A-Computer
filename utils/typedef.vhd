@@ -19,17 +19,33 @@ package utils is
         alu_op: std_logic_vector(3 downto 0);
         branch: std_logic;
     end record type_control_ex;
+    constant type_control_ex_zero : type_control_ex := (
+        branch_op => "000",
+        rx_src => "000",
+        ry_src => '0',
+        reg_dst => "000",
+        alu_op => "0000",
+        branch => '0'
+    );
 
 
     type type_control_mem is record
         mem_read: std_logic;
         mem_write: std_logic;
     end record type_control_mem;
+    constant type_control_mem_zero : type_control_mem := (
+        mem_read => '0',
+        mem_write => '0'
+    );
 
-
+    
     type type_control_wb is record
         mem_to_reg: std_logic;
         reg_write: std_logic;
     end record type_control_wb;
+    constant type_control_wb_zero : type_control_wb := (
+        mem_to_reg => '1',
+        reg_write => '0'
+    );
 
 end package utils;
