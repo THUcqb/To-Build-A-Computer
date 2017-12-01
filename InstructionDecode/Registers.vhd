@@ -26,7 +26,20 @@ end Registers;
 
 architecture Registers_bhv of Registers is
     type RegisterArray is array (10 downto 0) of std_logic_vector(15 downto 0);
-    signal elements: RegisterArray;
+    signal elements: RegisterArray :=
+    (
+        "0000000000001010",
+        "0000000000001001",
+        "0000000000001000",
+        "0000000000000111",
+        "0000000000000110",
+        "0000000000000101",
+        "0000000000000100",
+        "0000000000000011",
+        "0000000000000010",
+        "0000000000000001",
+        "0000000000000000"
+    );
 
     signal index_rx: integer;
     signal index_ry: integer;

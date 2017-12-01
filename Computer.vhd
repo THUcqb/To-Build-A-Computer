@@ -12,19 +12,21 @@ entity Computer is
         -- clock
         clk, rst: in std_logic;
 
-        -- Instruction memory - RAM 2
-        instruction_memory_data: inout std_logic_vector(15 downto 0);
+        iff_instruction: in std_logic_vector(15 downto 0);
 
-        instruction_memory_pin: out type_ram_pin;
+        -- Instruction memory - RAM 2
+        -- instruction_memory_data: inout std_logic_vector(15 downto 0);
+
+        -- instruction_memory_pin: out type_ram_pin;
 
         -- Data memory - RAM 1
-        data_memory_data: inout std_logic_vector(15 downto 0);
+        -- data_memory_data: inout std_logic_vector(15 downto 0);
 
-        data_memory_pin: out type_ram_pin
+        -- data_memory_pin: out type_ram_pin;
 
         -- serial port
 
-        --
+        led: out std_logic_vector(15 downto 0)
 
     );
 
@@ -273,6 +275,13 @@ architecture Computer_beh of Computer is
     signal hazard_pc_write: std_logic;
     signal hazard_if_id_write: std_logic;
     signal hazard_bubble_select: std_logic;
+
+
+    -- tmp for test
+    signal instruction_memory_data: std_logic_vector(15 downto 0);
+    signal instruction_memory_pin: type_ram_pin;
+    signal data_memory_data: std_logic_vector(15 downto 0);
+    signal data_memory_pin: type_ram_pin;
 begin
     instruction_fetch: InstructionFetch
         port map
@@ -288,6 +297,8 @@ begin
             if_id_write => hazard_if_id_write,
             im_read => mem_im_read,
             im_write => mem_im_write,
+
+            -- outputs
             pc => if_pc,
             instruction => if_instruction,
             ram2_data => instruction_memory_data,
@@ -300,11 +311,13 @@ begin
             clk => clk,
             rst => rst,
             if_pc => if_pc,
-            instruction => if_instruction,
+            instruction => iff_instruction,
             bubble_select => hazard_bubble_select,
             register_from_write_back => wb_rd,
             data_from_write_back => wb_data_to_write_back,
             reg_write => wb_reg_write,
+
+            -- ouputs
             rx => id_rx, ry => id_ry, rz => id_rz,
             rx_val => id_rx_val, ry_val => id_ry_val,
             reg_t_val => id_reg_t_val, reg_sp_val => id_reg_sp_val, reg_ih_val => id_reg_ih_val,
@@ -336,6 +349,8 @@ begin
             forward_data_from_wb => wb_data_to_write_back,
             forward_control_x => forward_control_x,
             forward_control_y => forward_control_y,
+
+            -- outputs
             alu_result => ex_alu_result,
             write_data => ex_write_data,
             id_ex_rd => ex_id_ex_rd,
@@ -359,6 +374,8 @@ begin
             ex_mem_rd => ex_ex_mem_rd,
             control_in_mem => ex_control_out_mem,
             control_in_wb => ex_control_out_wb,
+
+            -- outputs
             data_to_write_back => wb_data_to_write_back,
             mem_wb_rd => wb_rd,
             control_out_wb => wb_control_out_wb,
@@ -378,6 +395,8 @@ begin
             mem_wb_rd => wb_rd,
             control_ex_mem_wb => ex_reg_write,
             control_mem_wb_wb => wb_reg_write,
+
+            -- outputs
             forward_control_x => forward_control_x,
             forward_control_y => forward_control_y
         );
@@ -393,8 +412,12 @@ begin
             id_branch => id_branch,
             ex_branch => id_ex_branch,
             write_address => ex_jump_pc,
+
+            -- outputs
             pc_write => hazard_pc_write,
             if_id_write => hazard_if_id_write,
             bubble_select => hazard_bubble_select
         );
+
+    led <= ex_alu_result;
 end Computer_beh;

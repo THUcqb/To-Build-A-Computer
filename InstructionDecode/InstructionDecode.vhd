@@ -26,7 +26,8 @@ entity InstructionDecode is
     -- OUT
         -- Register file
         rx, ry, rz: out std_logic_vector(3 downto 0);
-        rx_val, ry_val: out std_logic_vector(15 downto 0);
+        rx_val: out std_logic_vector(15 downto 0);
+        ry_val: out std_logic_vector(15 downto 0);
         reg_t_val, reg_sp_val, reg_ih_val: out std_logic_vector(15 downto 0);
         id_pc: out std_logic_vector(15 downto 0);
 
@@ -207,7 +208,7 @@ begin
     -- update output data
     process (clk)
     begin
-        if clk'event and clk = '1' then
+        if rising_edge(clk) then
             rx_val <= lock_rx_val;
             ry_val <= lock_ry_val;
             rx <= lock_rx;

@@ -26,13 +26,13 @@ begin
 
     -- The expression corresponding to the first true condition is assigned
     forward_control_x <=
-        "01" when (control_mem_wb_wb = '1') and (mem_wb_rd = id_ex_rx) else
         "10" when (control_ex_mem_wb = '1') and (ex_mem_rd = id_ex_rx) else
+        "01" when (control_mem_wb_wb = '1') and (mem_wb_rd = id_ex_rx) else
         "00";
 
     forward_control_y <=
+        "10" when (control_ex_mem_wb = '1') and (ex_mem_rd = id_ex_ry) else
         "01" when (control_mem_wb_wb = '1') and (mem_wb_rd = id_ex_ry) else
-        "10" when (control_mem_wb_wb = '1') and (ex_mem_rd = id_ex_ry) else
         "00";
 
 end architecture forwarding_beh;
