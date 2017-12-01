@@ -32,5 +32,11 @@ package utils is
         reg_write: std_logic;
     end record type_control_wb;
 
+    type type_instruction is record
+        control_ex: type_control_ex;
+        control_mem: type_control_mem;
+        control_wb: type_control_wb;
+    end record type_instruction;
+    
     constant delay_in_registers: time := 5 ns;
 end package utils;
