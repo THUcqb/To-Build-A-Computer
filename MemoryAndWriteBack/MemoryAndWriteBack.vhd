@@ -9,7 +9,7 @@ use work.utils.all;
 entity MemoryAndWriteBack is
     port(
     -- clock
-        clk: in std_logic;
+        clk, rst: in std_logic;
 
     -- IN
         -- Data

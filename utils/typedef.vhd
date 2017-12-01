@@ -6,9 +6,10 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 package utils is
 
     type type_ram_pin is record
-        address: std_logic_vector(15 downto 0);
+        address: std_logic_vector(17 downto 0);
         oe, we, en: std_logic;
     end record type_ram_pin;
+    type type_mem_state is (mem_st1, mem_st2);
 
 
     type type_control_ex is record
@@ -38,7 +39,7 @@ package utils is
         mem_write => '0'
     );
 
-    
+
     type type_control_wb is record
         mem_to_reg: std_logic;
         reg_write: std_logic;
