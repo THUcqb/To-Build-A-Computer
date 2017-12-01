@@ -10,6 +10,9 @@ entity InstructionFetch is
         -- clock
         clk: in std_logic;
 
+        -- reset
+        rst: in std_logic;
+
         -- pc value in branch instructions
         branch_pc: in std_logic_vector(15 downto 0);
 
@@ -124,6 +127,16 @@ begin
         pin => ram2_pin,
         data => ram2_data
     );
+
+    reset: process (rst)
+    begin
+        if (rst = '0') then
+            pc_in <= (others => '0');
+            pc_out <= (others => '0');
+            instruction <= "0000100000000000";
+            pc <= "0000000000000001";
+        end if;
+    end process reset;
 
     clockUp: process (clk)
     begin

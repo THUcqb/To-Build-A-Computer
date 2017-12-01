@@ -3,10 +3,12 @@ use ieee.std_logic_1164.ALL;
 use ieee.std_logic_arith.ALL;
 use ieee.std_logic_unsigned.ALL;
 use work.utils.all;
+use work.constant_instruction.all;
 
 entity InstructionDecode is
     port (
         clk: in std_logic;
+        rst: in std_logic;
 
     -- IN
         -- From IF stage
@@ -190,6 +192,17 @@ begin
     lock_rx <= "0" & instruction(10 downto 8);
     lock_ry <= "0" & instruction(7 downto 5);
     lock_rz <= "0" & instruction(4 downto 2);
+
+    process (rst)
+    begin
+        if (rst = '0') then
+            control_out_ex <= NOP_ex;
+
+            control_out_mem <= NOP_mem;
+
+            control_out_wb <= NOP_wb;
+        end if;
+    end process;
 
     -- update output data
     process (clk)
