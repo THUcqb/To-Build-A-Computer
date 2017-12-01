@@ -18,13 +18,8 @@ end BranchControl;
 architecture BranchControl_beh of BranchControl is
 
 begin
-    pc_select <=
-    	"00" when (branch_op = "000"
-    			   or (branch_op = "001" and zero_flag = '0')
-    			   or (branch_op = "010" and zero_flag = '1')) else
-    	"01" when (branch_op = "011"
-    		       or (branch_op = "001" and zero_flag = '1')
-    		       or (branch_op = "010" and zero_flag = '0')) else
-    	"10" when (branch_op = "100");
+    pc_select(0) <= (branch_op(0) and zero_flag)
+                    or (branch_op(1) and (not zero_flag));
+    pc_select(1) <= branch_op(2);
 
 end BranchControl_beh;
