@@ -161,10 +161,6 @@ architecture Execute_beh of Execute is
     signal x_src_mux_out: std_logic_vector(15 downto 0);
 
 begin
-
-    control_out_mem <= control_in_mem;
-    control_out_wb <= control_in_wb;
-
     id_ex_rd <= id_ex_rd_tmp;
 
     branch_pc <= pc + immediate;
@@ -266,19 +262,14 @@ begin
 
     end process compZero;
 
-    reset: process(rst)
+    clockUp: process(clk, rst)
     begin
-        if (rst = '0') then
+        if rst = '0' then
             control_out_mem <= NOP_mem;
-
             control_out_wb <= NOP_wb;
-        end if;
-    end process reset;
-
-    clockUp: process(clk)
-    begin
-
-        if (clk'event and clk = '1') then
+        elsif rising_edge(clk) then
+            control_out_mem <= control_in_mem;
+            control_out_wb <= control_in_wb;
             alu_result <= alu_result_before_reg;
             write_data <= y_forward_mux_out;
             ex_mem_rd <= id_ex_rd_tmp;

@@ -92,21 +92,18 @@ begin
 
     mem_to_reg <= control_in_wb.mem_to_reg;
 
-    RESET: process (rst)
-    begin
-        im_read <= '1';
-        im_write <= '0';
-        control_out_wb <= NOP_wb;
-    end process;
-    
     -- Pass the control signals and some data to the next stage
     -- Including:
         -- WB signal
         -- EX/MEM.rd
         -- alu_result
-    PASSING: process (clk)
+    PASSING: process (rst, clk)
     begin
-        if (rising_edge(clk)) then
+        if rst = '0' then
+            im_read <= '1';
+            im_write <= '0';
+            control_out_wb <= NOP_wb;
+        elsif (rising_edge(clk)) then
             control_out_wb <= control_in_wb;
             mem_wb_rd <= ex_mem_rd;
 

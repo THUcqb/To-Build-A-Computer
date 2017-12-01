@@ -87,10 +87,6 @@ architecture Behavorial of InstructionFetch is
     -- control signal of ram2
     signal control_mem: type_control_mem;
 
-    -- constants: enabled/disabled
-    constant enabled: std_logic := '0';
-    constant disabled: std_logic := '1';
-
     constant zero_const_16: std_logic_vector(15 downto 0) := (others => '0');
 
 begin
@@ -128,28 +124,21 @@ begin
         data => ram2_data
     );
 
-    reset: process (rst)
+    clockUp: process (rst, clk)
     begin
-        if (rst = '0') then
-            pc_in <= (others => '0');
+        if rst = '0' then
             pc_out <= (others => '0');
             instruction <= "0000100000000000";
-            pc <= "0000000000000001";
-        end if;
-    end process reset;
-
-    clockUp: process (clk)
-    begin
-
-        if (clk'event and clk = '1') then
+            pc <= "0000000000000000";
+        elsif rising_edge(clk) then
 
             -- write mux output into pc register
-            if (pc_write = enabled) then
+            if (pc_write = '1') then
                 pc_out <= pc_in;
             end if;
 
             -- write stage registers
-            if (if_id_write = enabled) then
+            if (if_id_write = '1') then
                 -- instruction fetched
                 instruction <= ram2_data;
 

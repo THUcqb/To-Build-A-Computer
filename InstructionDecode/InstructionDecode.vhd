@@ -194,21 +194,14 @@ begin
     lock_ry <= "0" & instruction(7 downto 5);
     lock_rz <= "0" & instruction(4 downto 2);
 
-    process (rst)
-    begin
-        if (rst = '0') then
-            control_out_ex <= NOP_ex;
-
-            control_out_mem <= NOP_mem;
-
-            control_out_wb <= NOP_wb;
-        end if;
-    end process;
-
     -- update output data
-    process (clk)
+    process (rst, clk)
     begin
-        if rising_edge(clk) then
+        if rst = '0' then
+            control_out_ex <= NOP_ex;
+            control_out_mem <= NOP_mem;
+            control_out_wb <= NOP_wb;
+        elsif rising_edge(clk) then
             rx_val <= lock_rx_val;
             ry_val <= lock_ry_val;
             rx <= lock_rx;

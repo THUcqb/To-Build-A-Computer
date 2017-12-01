@@ -419,5 +419,5 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    led <= ex_alu_result;
+    led <= if_pc;
 end Computer_beh;
