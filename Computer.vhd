@@ -37,6 +37,9 @@ architecture Computer_beh of Computer is
             -- clock
             clk: in std_logic;
 
+            -- reset
+            rst: in std_logic;
+
             -- pc value in branch instructions
             branch_pc: in std_logic_vector(15 downto 0);
 
@@ -69,6 +72,7 @@ architecture Computer_beh of Computer is
         port
         (
             clk: in std_logic;
+            rst: in std_logic;
 
         -- IN
             -- From IF stage
@@ -106,6 +110,8 @@ architecture Computer_beh of Computer is
         port (
         -- clock
             clk: in std_logic;
+        -- reset
+            rst: in std_logic;
 
         -- IN
             -- Data (black)
@@ -150,6 +156,8 @@ architecture Computer_beh of Computer is
         port(
         -- clock
             clk: in std_logic;
+        -- reset
+            rst: in std_logic;
 
         -- IN
             -- Data
@@ -270,6 +278,7 @@ begin
         port map
         (
             clk => clk,
+            rst => rst,
             branch_pc => ex_branch_pc,
             jump_pc => ex_jump_pc,
             write_address => ex_alu_result,
@@ -289,6 +298,7 @@ begin
         port map
         (
             clk => clk,
+            rst => rst,
             if_pc => if_pc,
             instruction => if_instruction,
             bubble_select => hazard_bubble_select,
@@ -313,6 +323,7 @@ begin
         port map
         (
             clk => clk,
+            rst => rst,
             rx => id_rx, ry => id_ry, rz => id_rz,
             rx_val => id_rx_val, ry_val => id_ry_val,
             sp_val => id_reg_sp_val, ih_val => id_reg_ih_val, t_val => id_reg_t_val,
@@ -342,6 +353,7 @@ begin
         port map
         (
             clk => clk,
+            rst => rst,
             alu_result => ex_alu_result,
             write_data => ex_write_data,
             ex_mem_rd => ex_ex_mem_rd,

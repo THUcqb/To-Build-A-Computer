@@ -3,6 +3,7 @@ use ieee.STD_LOGIC_1164.ALL;
 use ieee.STD_LOGIC_ARITH.ALL;
 use ieee.STD_LOGIC_UNSIGNED.ALL;
 use work.utils.all;
+use work.constant_instruction.all;
 
 -- This is the top entity of the MEM and WB stage
 
@@ -10,6 +11,8 @@ entity MemoryAndWriteBack is
     port(
     -- clock
         clk: in std_logic;
+    -- reset
+        rst: in std_logic;
 
     -- IN
         -- Data
@@ -88,6 +91,13 @@ begin
         );
 
     mem_to_reg <= control_in_wb.mem_to_reg;
+
+    RESET: process (rst)
+    begin
+        im_read <= '1';
+        im_write <= '0';
+        control_out_wb <= NOP_wb;
+    end process;
     
     -- Pass the control signals and some data to the next stage
     -- Including:

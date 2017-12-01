@@ -5,11 +5,14 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 use work.utils.all;
+use work.constant_instruction.all;
 
 entity Execute is
     port (
     -- clock
         clk: in std_logic;
+    -- reset
+        rst: in std_logic;
 
     -- IN
         -- Data (black)
@@ -262,6 +265,15 @@ begin
         end if;
 
     end process compZero;
+
+    reset: process(rst)
+    begin
+        if (rst = '0') then
+            control_out_mem <= NOP_mem;
+
+            control_out_wb <= NOP_wb;
+        end if;
+    end process reset;
 
     clockUp: process(clk)
     begin
