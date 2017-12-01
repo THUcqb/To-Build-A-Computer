@@ -24,7 +24,7 @@ architecture BubbleMaker_bhv of BubbleMaker is
 begin
     process (bubble_select, control_in_ex, control_in_mem, control_in_wb)
     begin
-        if bubble_select = '1' then
+        if bubble_select = '0' then
             control_out_ex <= control_in_ex;
             control_out_wb <= control_in_wb;
             control_out_mem <= control_in_mem;
