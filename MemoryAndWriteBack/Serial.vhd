@@ -24,7 +24,7 @@ end Serial;
 architecture beh of Serial is
 
     type serial_state is (
-        idle, w1, w2, w3, w4, r1, r2, r3
+        idle, w2, r2
     );
     signal state: serial_state := idle;
 
@@ -50,18 +50,14 @@ begin
             case state is
                 when idle =>
                     if control_mem.mem_write = '1' then
-                        state <= w1;
+                        state <= w2;
                     elsif control_mem.mem_read = '1' then
-                        state <= r1;
+                        state <= r2;
                     end if;
 
-                when w1 =>
-                    state <= w2;
                 when w2 =>
                     state <= idle;
 
-                when r1 =>
-                    state <= r2;
                 when r2 =>
                     state <= idle;
 
