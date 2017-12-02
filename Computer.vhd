@@ -170,9 +170,9 @@ architecture Computer_beh of Computer is
             control_in_wb: in type_control_wb;
 
             -- OUT
-                -- data
-                data_to_write_back: out std_logic_vector(15 downto 0);
-                mem_wb_rd: out std_logic_vector(3 downto 0);
+            -- data
+            data_to_write_back: out std_logic_vector(15 downto 0);
+            mem_wb_rd: out std_logic_vector(3 downto 0);
 
             -- Control
             control_out_wb: out type_control_wb;
@@ -181,9 +181,6 @@ architecture Computer_beh of Computer is
             ram1_data: inout std_logic_vector(15 downto 0);
             ram1_pin: out type_ram_pin;
             -- Instruction Memory
-            ram2_address: out std_logic_vector(15 downto 0);
-            ram2_write_data: out std_logic_vector(15 downto 0);
-            ram2_data: inout std_logic_vector(15 downto 0);
             instruction_memory_control: out type_control_mem;
             -- Serial port
             serial1_pin_in: in type_serial_pin_in;
@@ -232,6 +229,8 @@ architecture Computer_beh of Computer is
 
     -- IF's outputs
     signal if_pc, if_instruction: std_logic_vector(15 downto 0);
+    signal if_instruction_memory_data: std_logic_vector(15 downto 0);
+    signal if_instruction_memory_pin: type_ram_pin;
 
     -- ID's outputs
     signal id_rx, id_ry, id_rz: std_logic_vector(3 downto 0);
@@ -295,9 +294,11 @@ begin
             -- outputs
             pc => if_pc,
             instruction => if_instruction,
-            ram2_data => instruction_memory_data,
-            ram2_pin => instruction_memory_pin
+            ram2_data => if_instruction_memory_data,
+            ram2_pin => if_instruction_memory_pin
         );
+    instruction_memory_pin <= if_instruction_memory_pin;
+    instruction_memory_data <= if_instruction_memory_data;
 
     instruction_decode: InstructionDecode
         port map
@@ -376,9 +377,6 @@ begin
 
             ram1_data => data_memory_data,
             ram1_pin => data_memory_pin,
-            ram2_address => ex_alu_result,
-            ram2_write_data => ex_write_data,
-            ram2_data => instruction_memory_data,
             instruction_memory_control.mem_read => mem_im_read,
             instruction_memory_control.mem_write => mem_im_write,
 
@@ -420,5 +418,5 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    led <= if_pc;
+    led <= if_instruction(7 downto 0) & mem_im_read & mem_im_write & if_instruction_memory_pin.address(5 downto 0);
 end Computer_beh;

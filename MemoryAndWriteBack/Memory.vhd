@@ -39,8 +39,16 @@ begin
               '1';
 
     pin.address <= "00" & address;
+
     --  Set to Z when preparing read.
     data <= write_data when control_mem.mem_write = '1' else
             (others => 'Z');
+
+    --process (clk)
+    --begin
+    --    if rising_edge(clk) then
+    --        data <= (others => 'Z') after delay_in_registers;
+    --    end if;
+    --end process;
 
 end memory_bev;
