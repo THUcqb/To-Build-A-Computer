@@ -11,6 +11,12 @@ package utils is
     end record type_ram_pin;
     type type_mem_state is (mem_st1, mem_st2);
 
+    type type_serial_pin_out is record
+        rdn, wrn: std_logic;
+    end record type_serial_pin_out;
+    type type_serial_pin_in is record
+        tbre, tsre, ready: std_logic;
+    end record type_serial_pin_in;
 
     type type_control_ex is record
         branch_op: std_logic_vector(2 downto 0);

@@ -31,9 +31,9 @@ BITFILE         ?= build/$(PROJECT).bit
 
 COMMON_OPTS     ?= -intstyle xflow
 XST_OPTS        ?=
-NGDBUILD_OPTS   ?= 
+NGDBUILD_OPTS   ?=
 MAP_OPTS        ?=
-PAR_OPTS        ?= -mt on
+PAR_OPTS        ?=
 BITGEN_OPTS     ?=
 TRACE_OPTS      ?=
 FUSE_OPTS       ?= -incremental

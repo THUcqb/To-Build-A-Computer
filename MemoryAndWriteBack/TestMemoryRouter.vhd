@@ -11,7 +11,7 @@ use work.utils.all;
 
 --  dyp_right <= '1' if mem_state = mem_st1; '2' if = mem_st2
 
-entity TestMemory is
+entity TestMemoryRouter is
     port(
     -- clock
         clk, rst: in std_logic;
@@ -37,9 +37,9 @@ entity TestMemory is
         LED: out std_logic_vector(15 downto 0)
     );
 
-end entity TestMemory;
+end entity TestMemoryRouter;
 
-architecture beh of TestMemory is
+architecture beh of TestMemoryRouter is
 
     component Memory is
         port(
