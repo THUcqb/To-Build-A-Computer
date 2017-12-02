@@ -9,10 +9,8 @@ use work.constant_instruction.all;
 
 entity MemoryAndWriteBack is
     port(
-    -- clock
-        clk: in std_logic;
-    -- reset
-        rst: in std_logic;
+    -- clock and reset
+        clk, rst: in std_logic;
 
     -- IN
         -- Data
