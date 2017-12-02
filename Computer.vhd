@@ -171,23 +171,25 @@ architecture Computer_beh of Computer is
             control_in_mem: in type_control_mem;
             control_in_wb: in type_control_wb;
 
-        -- MID - write back
-            -- data
-            -- data_from_memory: out std_logic_vector(15 downto 0);
-            -- data_from_alu_result: out std_logic_vector(15 downto 0);
+            -- OUT
+                -- data
+                data_to_write_back: out std_logic_vector(15 downto 0);
+                mem_wb_rd: out std_logic_vector(3 downto 0);
 
-        -- OUT
-            -- data
-            data_to_write_back: out std_logic_vector(15 downto 0);
-            --
-            mem_wb_rd: out std_logic_vector(3 downto 0);
             -- Control
             control_out_wb: out type_control_wb;
-            im_read: out std_logic;
-            im_write: out std_logic;
-            -- Device
+
+            -- Data Memory
             ram1_data: inout std_logic_vector(15 downto 0);
-            ram1_pin: out type_ram_pin
+            ram1_pin: out type_ram_pin;
+            -- Instruction Memory
+            ram2_address: out std_logic_vector(15 downto 0);
+            ram2_write_data: out std_logic_vector(15 downto 0);
+            ram2_data: inout std_logic_vector(15 downto 0);
+            instruction_memory_control: out type_control_mem;
+            -- Serial port
+            serial1_pin_in: in type_serial_pin_in;
+            serial1_pin_out: out type_serial_pin_out
         );
     end component MemoryAndWriteBack;
 
@@ -282,6 +284,9 @@ architecture Computer_beh of Computer is
     signal instruction_memory_pin: type_ram_pin;
     signal data_memory_data: std_logic_vector(15 downto 0);
     signal data_memory_pin: type_ram_pin;
+    signal serial1_pin_in: type_serial_pin_in;
+    signal serial1_pin_out: type_serial_pin_out;
+
 begin
     instruction_fetch: InstructionFetch
         port map
@@ -379,10 +384,17 @@ begin
             data_to_write_back => wb_data_to_write_back,
             mem_wb_rd => wb_rd,
             control_out_wb => wb_control_out_wb,
-            im_read => mem_im_read,
-            im_write => mem_im_write,
+
             ram1_data => data_memory_data,
-            ram1_pin => data_memory_pin
+            ram1_pin => data_memory_pin,
+            ram2_address => ex_alu_result,
+            ram2_write_data => ex_write_data,
+            ram2_data => instruction_memory_data,
+            instruction_memory_control.mem_read => mem_im_read,
+            instruction_memory_control.mem_write => mem_im_write,
+
+            serial1_pin_in => serial1_pin_in,
+            serial1_pin_out => serial1_pin_out
         );
     wb_reg_write <= wb_control_out_wb.reg_write;
 

@@ -25,7 +25,7 @@ entity MemoryRouter is
 
     -- OUT
         -- read_data
-        read_data: out std_logic_vector(15 downto 0);
+        read_data: buffer std_logic_vector(15 downto 0);
 
     -- PIN
         -- Data Memory
@@ -33,7 +33,7 @@ entity MemoryRouter is
         ram1_pin: out type_ram_pin;
         -- Instruction Memory
         ram2_data: inout std_logic_vector(15 downto 0);
-        ram2_pin: out type_ram_pin;
+        instruction_memory_control: out type_control_mem;
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
         serial1_pin_out: out type_serial_pin_out
@@ -70,14 +70,18 @@ architecture beh of MemoryRouter is
         );
     end component Serial;
 
-    signal data_memory_control, instruction_memory_control, serial1_control
+    signal data_memory_control, serial1_control
            : type_control_mem;
 
 begin
 
     --  Route the memmory or serial port wish to operate with input address
-    instruction_memory_control <= control_mem when address(15 downto 14) = "01" else
-                           type_control_mem_zero;
+    instruction_memory_control.mem_write <='1' when address(15 downto 14) = "01"
+                                                and control_mem.mem_write = '1'
+                                            else '0';
+    instruction_memory_control.mem_read <= '0' when address(15 downto 14) = "01"
+                                                and control_mem.mem_write = '1'
+                                            else '1';
 
     data_memory_control <= control_mem when (address(15) = '1' and
                         address /= x"BF00" and address /= x"BF01" ) else
@@ -101,18 +105,6 @@ begin
 
             pin => ram1_pin,
             data => ram1_data
-        );
-
-    instruction_memory: Memory
-        port map(
-            clk => clk,
-            rst => rst,
-            control_mem => instruction_memory_control,
-            address => address,
-            write_data => write_data,
-
-            pin => ram2_pin,
-            data => ram2_data
         );
 
     serial1: Serial

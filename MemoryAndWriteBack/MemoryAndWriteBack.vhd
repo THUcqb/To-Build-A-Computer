@@ -26,33 +26,58 @@ entity MemoryAndWriteBack is
     -- OUT
         -- data
         data_to_write_back: out std_logic_vector(15 downto 0);
-        --
         mem_wb_rd: out std_logic_vector(3 downto 0);
+
         -- Control
         control_out_wb: out type_control_wb;
-        im_read: out std_logic;
-        im_write: out std_logic;
 
-        -- Device
+        -- Data Memory
         ram1_data: inout std_logic_vector(15 downto 0);
-        ram1_pin: out type_ram_pin
+        ram1_pin: out type_ram_pin;
+        -- Instruction Memory
+        ram2_address: out std_logic_vector(15 downto 0);
+        ram2_write_data: out std_logic_vector(15 downto 0);
+        ram2_data: inout std_logic_vector(15 downto 0);
+        instruction_memory_control: out type_control_mem;
+        -- Serial port
+        serial1_pin_in: in type_serial_pin_in;
+        serial1_pin_out: out type_serial_pin_out
+
     );
 
 end entity MemoryAndWriteBack;
 
 architecture memory_and_write_back_beh of MemoryAndWriteBack is
 
-    component Memory is
+    component MemoryRouter is
         port(
+        -- clock
+            clk, rst: in std_logic;
+
         -- IN
+            -- Data
+            address: in std_logic_vector(15 downto 0);
+            write_data: in std_logic_vector(15 downto 0);
+
+            -- Control
             control_mem: in type_control_mem;
-            address, write_data: in std_logic_vector(15 downto 0);
 
         -- OUT
-            pin: out type_ram_pin;
-            data: inout std_logic_vector(15 downto 0)
+            -- read_data
+            read_data: buffer std_logic_vector(15 downto 0);
+
+        -- PIN
+            -- Data Memory
+            ram1_data: inout std_logic_vector(15 downto 0);
+            ram1_pin: out type_ram_pin;
+            -- Instruction Memory
+            ram2_data: inout std_logic_vector(15 downto 0);
+            instruction_memory_control: out type_control_mem;
+            -- Serial port
+            serial1_pin_in: in type_serial_pin_in;
+            serial1_pin_out: out type_serial_pin_out
         );
-    end component Memory;
+    end component MemoryRouter;
 
     component Mux2 is
         port (
@@ -69,15 +94,26 @@ architecture memory_and_write_back_beh of MemoryAndWriteBack is
     signal data_from_alu_result: std_logic_vector(15 downto 0);
 
     signal mem_to_reg: std_logic;
+
+    signal read_data: std_logic_vector(15 downto 0);
 begin
-    ram1: Memory
+
+    memory_router: MemoryRouter
         port map(
+            clk => clk,
+            rst => rst,
             control_mem => control_in_mem,
             address => alu_result,
             write_data => write_data,
 
-            pin => ram1_pin,
-            data => ram1_data
+            read_data => read_data,
+
+            ram1_pin => ram1_pin,
+            ram1_data => ram1_data,
+            ram2_data => ram2_data,
+            instruction_memory_control => instruction_memory_control,
+            serial1_pin_in => serial1_pin_in,
+            serial1_pin_out => serial1_pin_out
         );
 
     mux_data_to_write_back: Mux2
@@ -90,6 +126,8 @@ begin
 
     mem_to_reg <= control_in_wb.mem_to_reg;
 
+    ram2_address <= alu_result;
+    ram2_write_data <= write_data;
     -- Pass the control signals and some data to the next stage
     -- Including:
         -- WB signal
@@ -98,14 +136,12 @@ begin
     PASSING: process (rst, clk)
     begin
         if rst = '0' then
-            im_read <= '1';
-            im_write <= '0';
             control_out_wb <= NOP_wb;
         elsif (rising_edge(clk)) then
             control_out_wb <= control_in_wb;
             mem_wb_rd <= ex_mem_rd;
 
-            data_from_memory <= ram1_data;
+            data_from_memory <= read_data;
             data_from_alu_result <= alu_result;
         end if;
     end process;
