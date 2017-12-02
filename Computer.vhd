@@ -12,19 +12,17 @@ entity Computer is
         -- clock
         clk, rst: in std_logic;
 
-        iff_instruction: in std_logic_vector(15 downto 0);
-
         -- Instruction memory - RAM 2
-        -- instruction_memory_data: inout std_logic_vector(15 downto 0);
-
-        -- instruction_memory_pin: out type_ram_pin;
+        instruction_memory_data: inout std_logic_vector(15 downto 0);
+        instruction_memory_pin: out type_ram_pin;
 
         -- Data memory - RAM 1
-        -- data_memory_data: inout std_logic_vector(15 downto 0);
-
-        -- data_memory_pin: out type_ram_pin;
+        data_memory_data: inout std_logic_vector(15 downto 0);
+        data_memory_pin: out type_ram_pin;
 
         -- serial port
+        serial1_pin_in: in type_serial_pin_in;
+        serial1_pin_out: out type_serial_pin_out;
 
         led: out std_logic_vector(15 downto 0)
 
@@ -278,15 +276,6 @@ architecture Computer_beh of Computer is
     signal hazard_if_id_write: std_logic;
     signal hazard_bubble_select: std_logic;
 
-
-    -- tmp for test
-    signal instruction_memory_data: std_logic_vector(15 downto 0);
-    signal instruction_memory_pin: type_ram_pin;
-    signal data_memory_data: std_logic_vector(15 downto 0);
-    signal data_memory_pin: type_ram_pin;
-    signal serial1_pin_in: type_serial_pin_in;
-    signal serial1_pin_out: type_serial_pin_out;
-
 begin
     instruction_fetch: InstructionFetch
         port map
@@ -316,7 +305,7 @@ begin
             clk => clk,
             rst => rst,
             if_pc => if_pc,
-            instruction => iff_instruction,
+            instruction => if_instruction,
             bubble_select => hazard_bubble_select,
             register_from_write_back => wb_rd,
             data_from_write_back => wb_data_to_write_back,

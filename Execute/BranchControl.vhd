@@ -18,9 +18,7 @@ end BranchControl;
 architecture BranchControl_beh of BranchControl is
 
 begin
-    -- pc_select(0) <= (branch_op(0) and zero_flag)
-    --                or (branch_op(1) and (not zero_flag));
-    -- pc_select(1) <= branch_op(2);
-
-    pc_select <= branch_op(1 downto 0);
+    pc_select(0) <= (branch_op(0) and zero_flag) 
+                    or (branch_op(1) and (not zero_flag));
+    pc_select(1) <= branch_op(2);
 end BranchControl_beh;
