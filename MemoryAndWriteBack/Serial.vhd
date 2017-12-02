@@ -23,16 +23,50 @@ end Serial;
 
 architecture beh of Serial is
 
-    signal state: type_mem_state := mem_st1;
+    type serial_state is (
+        idle, w1, w2, w3, w4, r1, r2, r3
+    );
+    signal state: serial_state := idle;
 
 begin
 
-    pin_out.rdn <= '1';
-    pin_out.wrn <= '0';
+    --  Serial port read and write control signals
+    --  Disable when resetting or not selecting serial port
+    pin_out.wrn <= '0' when state = w2 else '1';
 
-    --  Testing, data_memory_bus will be all '1' if trying to write a serial!
-    --  This means being routed successfully
-    data <= "1111111111111111" when control_mem.mem_write = '1' else
+    pin_out.rdn <= '0' when state = r2 else '1';
+
+    --  Data memory bus
+    data <= "00000000000000" & pin_in.ready & (pin_in.tsre and pin_in.tbre)
+                when address = x"BF01" else
+            write_data when control_mem.mem_write = '1' else
             (others => 'Z');
 
+    process (clk, rst)
+    begin
+        if (rst = '0') then
+            state <= idle;
+        elsif rising_edge(clk) and address = x"BF00" then
+            case state is
+                when idle =>
+                    if control_mem.mem_write = '1' then
+                        state <= w1;
+                    elsif control_mem.mem_read = '1' then
+                        state <= r1;
+                    end if;
+
+                when w1 =>
+                    state <= w2;
+                when w2 =>
+                    state <= idle;
+
+                when r1 =>
+                    state <= r2;
+                when r2 =>
+                    state <= idle;
+
+                when others =>
+            end case;
+        end if;
+    end process;
 end beh;

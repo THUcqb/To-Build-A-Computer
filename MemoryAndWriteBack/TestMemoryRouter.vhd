@@ -75,7 +75,7 @@ architecture beh of TestMemoryRouter is
     signal address: std_logic_vector(15 downto 0);
     signal write_data: std_logic_vector(15 downto 0);
 begin
-    address <= sw(14 downto 8) & "100000000";
+    address <= sw(14 downto 11) & "111100000" & sw(10 downto 8);
     write_data <= "00000000" & sw(7 downto 0);
     control_in_mem.mem_write <= sw(15);
     control_in_mem.mem_read <= not sw(15);
