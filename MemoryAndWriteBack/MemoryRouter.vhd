@@ -10,7 +10,7 @@ use work.utils.all;
 --  RAM1(DM) 0x8000 - 0xFFFF except 0xBF00~0xBF01
 --  SerialPort1 0xBF00, 0xBF01
 
-entity MemoryManager is
+entity MemoryRouter is
     port(
     -- clock
         clk, rst: in std_logic;
@@ -39,9 +39,9 @@ entity MemoryManager is
         serial1_pin_out: out type_serial_pin_out
     );
 
-end entity MemoryManager;
+end entity MemoryRouter;
 
-architecture beh of MemoryManager is
+architecture beh of MemoryRouter is
 
     component Memory is
         port(
@@ -76,10 +76,10 @@ architecture beh of MemoryManager is
 begin
 
     --  Route the memmory or serial port wish to operate with input address
-    data_memory_control <= control_mem when address(15 downto 14) = "01" else
+    instruction_memory_control <= control_mem when address(15 downto 14) = "01" else
                            type_control_mem_zero;
 
-    instruction_memory_control <= control_mem when (address(15) = '1' and
+    data_memory_control <= control_mem when (address(15) = '1' and
                         address /= x"BF00" and address /= x"BF01" ) else
                                   type_control_mem_zero;
 
