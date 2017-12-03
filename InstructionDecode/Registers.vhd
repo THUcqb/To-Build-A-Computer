@@ -71,16 +71,31 @@ begin
 
     process (clk)
     begin
-        if clk'event and clk = '1' then
-            if (control_reg_write = '1') then
-                elements(index_write_back) <= data_from_write_back after delay_in_registers;
+        if rising_edge(clk) then
+            if control_reg_write = '1' then
+                elements(index_write_back) <= data_from_write_back;
             end if;
-            rx_val <= elements(index_rx) after delay_in_registers + delay_in_registers;
-            ry_val <= elements(index_ry) after delay_in_registers + delay_in_registers;
-            reg_t_val <= elements(8);
-            reg_sp_val <= elements(9);
-            reg_ih_val <= elements(10);
         end if;
     end process;
+
+    rx_val <= elements(index_rx);
+    ry_val <= elements(index_ry);
+    reg_t_val <= elements(8);
+    reg_sp_val <= elements(9);
+    reg_ih_val <= elements(10);
+
+    --process (clk)
+    --begin
+    --    if clk'event and clk = '1' then
+    --        if (control_reg_write = '1') then
+    --            elements(index_write_back) <= data_from_write_back after delay_in_registers;
+    --        end if;
+    --        rx_val <= elements(index_rx) after delay_in_registers + delay_in_registers;
+    --        ry_val <= elements(index_ry) after delay_in_registers + delay_in_registers;
+    --        reg_t_val <= elements(8);
+    --        reg_sp_val <= elements(9);
+    --        reg_ih_val <= elements(10);
+    --    end if;
+    --end process;
 
 end Registers_bhv;

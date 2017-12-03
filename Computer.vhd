@@ -418,5 +418,5 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    led <= if_instruction_memory_data(7 downto 0) & if_instruction_memory_pin.address(7 downto 0);
+    led <= ex_jump_pc(7 downto 2) & ex_pc_select & id_pc(7 downto 0);
 end Computer_beh;

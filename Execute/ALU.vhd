@@ -30,6 +30,7 @@ architecture Behavorial of ALU is
 begin
 
     process (input_x, input_y, op)        
+        variable tmp: integer;
     begin
 
         case op is
@@ -131,7 +132,11 @@ begin
 
             -- SLL: A << B
             when "0101" =>
-                tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SLL CONV_INTEGER(input_y));
+                tmp := CONV_INTEGER(input_y);
+                if tmp = 0 then
+                    tmp := 8;
+                end if;
+                tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SLL tmp);
                 if (tmp_result = "0000000000000000") then
                     zf <= '1';
                 else
@@ -147,7 +152,11 @@ begin
 
             -- SRA: A >> B
             when "0110" =>
-                tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SRA CONV_INTEGER(input_y));
+                tmp := CONV_INTEGER(input_y);
+                if tmp = 0 then
+                    tmp := 8;
+                end if;
+                tmp_result := TO_STDLOGICVECTOR(TO_BITVECTOR(input_x) SRA tmp);
                 if (tmp_result = "0000000000000000") then
                     zf <= '1';
                 else

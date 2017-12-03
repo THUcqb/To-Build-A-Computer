@@ -246,7 +246,7 @@ package constant_instruction is
     constant BTEQZ_ex: type_control_ex :=
     (
         branch_op => "001",
-        rx_src => "011",
+        rx_src => "100",
         ry_src => '1',
         reg_dst => "000",
         alu_op => "0000",
@@ -272,7 +272,7 @@ package constant_instruction is
     constant BTNEZ_ex: type_control_ex :=
     (
         branch_op => "010",
-        rx_src => "011",
+        rx_src => "100",
         ry_src => '1',
         reg_dst => "000",
         alu_op => "0000",
@@ -584,7 +584,7 @@ package constant_instruction is
     constant MFPC_ex: type_control_ex :=
     (
         branch_op => "000",
-        rx_src => "100",
+        rx_src => "011",
         ry_src => '0',
         reg_dst => "000",
         alu_op => "1001",
