@@ -68,6 +68,7 @@ architecture Behavorial of InstructionFetch is
     component Memory is
         port(
         -- IN
+            clk, rst: in std_logic;
             control_mem: in type_control_mem;
             address, write_data: in std_logic_vector(15 downto 0);
 
@@ -117,6 +118,8 @@ begin
 
     ram2: Memory port map
     (
+        clk => clk,
+        rst => rst,
         control_mem => control_mem,
         address => address,
         write_data => write_data,
