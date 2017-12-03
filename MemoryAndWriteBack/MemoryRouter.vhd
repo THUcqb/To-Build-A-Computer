@@ -32,7 +32,6 @@ entity MemoryRouter is
         ram1_data: inout std_logic_vector(15 downto 0);
         ram1_pin: out type_ram_pin;
         -- Instruction Memory
-        ram2_data: inout std_logic_vector(15 downto 0);
         instruction_memory_control: out type_control_mem;
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
@@ -92,8 +91,7 @@ begin
                            type_control_mem_zero;
 
     --  Select the read out data with address
-    read_data <= ram2_data when address(15) = '0' else
-                 ram1_data;
+    read_data <= ram1_data;
 
     data_memory: Memory
         port map(

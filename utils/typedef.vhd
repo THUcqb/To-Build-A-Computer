@@ -14,6 +14,7 @@ package utils is
     type type_serial_pin_out is record
         rdn, wrn: std_logic;
     end record type_serial_pin_out;
+
     type type_serial_pin_in is record
         tbre, tsre, ready: std_logic;
     end record type_serial_pin_in;
@@ -26,6 +27,7 @@ package utils is
         alu_op: std_logic_vector(3 downto 0);
         branch: std_logic;
     end record type_control_ex;
+
     constant type_control_ex_zero : type_control_ex := (
         branch_op => "000",
         rx_src => "000",
