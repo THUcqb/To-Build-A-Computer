@@ -38,8 +38,9 @@ entity MemoryAndWriteBack is
         instruction_memory_control: out type_control_mem;
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
-        serial1_pin_out: out type_serial_pin_out
+        serial1_pin_out: out type_serial_pin_out;
 
+        test: out std_logic_vector(15 downto 0)
     );
 
 end entity MemoryAndWriteBack;
@@ -119,7 +120,6 @@ begin
             s => mem_to_reg
         );
 
-    mem_to_reg <= control_in_wb.mem_to_reg;
 
     -- Pass the control signals and some data to the next stage
     -- Including:
@@ -132,11 +132,14 @@ begin
             control_out_wb <= NOP_wb;
         elsif (rising_edge(clk)) then
             control_out_wb <= control_in_wb;
+            mem_to_reg <= control_in_wb.mem_to_reg;
             mem_wb_rd <= ex_mem_rd;
 
             data_from_memory <= read_data;
             data_from_alu_result <= alu_result;
         end if;
     end process;
+
+    test <= "0000000000000" & data_from_alu_result(1 downto 0) & mem_to_reg;
 
 end architecture memory_and_write_back_beh;

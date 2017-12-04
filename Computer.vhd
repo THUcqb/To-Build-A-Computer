@@ -10,7 +10,8 @@ entity Computer is
     port
     (
         -- clock
-        clk, rst: in std_logic;
+        clk_0, rst: in std_logic;
+        clk_manual: in std_logic;
 
         -- Instruction memory - RAM 2
         instruction_memory_data: inout std_logic_vector(15 downto 0);
@@ -184,7 +185,8 @@ architecture Computer_beh of Computer is
             instruction_memory_control: out type_control_mem;
             -- Serial port
             serial1_pin_in: in type_serial_pin_in;
-            serial1_pin_out: out type_serial_pin_out
+            serial1_pin_out: out type_serial_pin_out;
+            test: out std_logic_vector(15 downto 0)
         );
     end component MemoryAndWriteBack;
 
@@ -227,7 +229,7 @@ architecture Computer_beh of Computer is
         );
     end component HazardDetection;
 
-    -- signal clk: std_logic := '1';
+    signal clk: std_logic := '1';
     shared variable n: integer := 0;
 
     -- IF's outputs
@@ -268,6 +270,7 @@ architecture Computer_beh of Computer is
     signal wb_reg_write: std_logic;
     signal mem_im_read: std_logic;
     signal mem_im_write: std_logic;
+    signal mem_test: std_logic_vector(15 downto 0);
 
     -- Forwarding's outputs
     signal forward_control_x: std_logic_vector(1 downto 0);
@@ -384,7 +387,9 @@ begin
             instruction_memory_control.mem_write => mem_im_write,
 
             serial1_pin_in => serial1_pin_in,
-            serial1_pin_out => serial1_pin_out
+            serial1_pin_out => serial1_pin_out,
+
+            test => mem_test
         );
     wb_reg_write <= wb_control_out_wb.reg_write;
 
@@ -421,13 +426,11 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    led <= ex_pc_select & id_control_out_ex.branch_op & ex_jump_pc(2 downto 0) & id_pc(7 downto 0);
+    led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);
 
-    --process (clk_0, pause)
+    --process (clk_0)
     --begin
-    --    if pause = '0' then
-    --        n := 0;
-    --    elsif rising_edge(clk_0) then
+    --    if rising_edge(clk_0) then
     --        n := n + 1;
     --        if n = ratio then
     --            clk <= not clk;
@@ -435,4 +438,6 @@ begin
     --        end if;
     --    end if;
     --end process;
+
+    clk <= clk_manual;
 end Computer_beh;

@@ -71,7 +71,7 @@ begin
 
     process (clk)
     begin
-        if rising_edge(clk) then
+        if falling_edge(clk) then
             if control_reg_write = '1' then
                 elements(index_write_back) <= data_from_write_back;
             end if;

@@ -63,5 +63,5 @@ package utils is
         control_wb: type_control_wb;
     end record type_instruction;
     
-    constant ratio: integer := 50000000;
+    constant ratio: integer := 500000;
 end package utils;
