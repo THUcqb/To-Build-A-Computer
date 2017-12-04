@@ -20,12 +20,15 @@ entity Registers is
         ry_val: out std_logic_vector(15 downto 0);
         reg_t_val: out std_logic_vector(15 downto 0);
         reg_sp_val: out std_logic_vector(15 downto 0);
-        reg_ih_val: out std_logic_vector(15 downto 0)
+        reg_ih_val: out std_logic_vector(15 downto 0);
+
+    -- display
+        register_file: out RegisterArray
     );
 end Registers;
 
 architecture Registers_bhv of Registers is
-    type RegisterArray is array (10 downto 0) of std_logic_vector(15 downto 0);
+
     signal elements: RegisterArray :=
     (
         "0000000000001010",
@@ -98,4 +101,6 @@ begin
     --    end if;
     --end process;
 
+    -- display
+    register_file <= elements;
 end Registers_bhv;

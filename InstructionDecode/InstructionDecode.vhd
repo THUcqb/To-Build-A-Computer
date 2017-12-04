@@ -39,7 +39,10 @@ entity InstructionDecode is
         control_out_wb: out type_control_wb;
 
         -- Hazard detection
-        id_branch: out std_logic
+        id_branch: out std_logic;
+
+    -- Display
+        register_file: out RegisterArray
     );
 end InstructionDecode;
 
@@ -91,8 +94,11 @@ architecture InstructionDecode_bhv of InstructionDecode is
             ry_val: out std_logic_vector(15 downto 0);
             reg_t_val: out std_logic_vector(15 downto 0);
             reg_sp_val: out std_logic_vector(15 downto 0);
-            reg_ih_val: out std_logic_vector(15 downto 0)
-        );
+            reg_ih_val: out std_logic_vector(15 downto 0);
+
+        -- Display
+            register_file: out RegisterArray
+       );
     end component;
 
     component Mux8 is
@@ -137,7 +143,8 @@ begin
             data_from_write_back => data_from_write_back,
             control_reg_write => reg_write,
             rx_val => lock_rx_val, ry_val => lock_ry_val,
-            reg_t_val => lock_reg_t_val, reg_sp_val => lock_reg_sp_val, reg_ih_val => lock_reg_ih_val
+            reg_t_val => lock_reg_t_val, reg_sp_val => lock_reg_sp_val, reg_ih_val => lock_reg_ih_val,
+            register_file => register_file
         );
 
     controller: Control
