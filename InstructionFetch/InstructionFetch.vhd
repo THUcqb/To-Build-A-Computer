@@ -90,6 +90,7 @@ architecture Behavorial of InstructionFetch is
 
     constant zero_const_16: std_logic_vector(15 downto 0) := (others => '0');
 
+    signal old_instruction: std_logic_vector(15 downto 0);
 begin
 
     -- pc + 1 as a candidate of next pc, and another is branch_pc
@@ -140,10 +141,16 @@ begin
                 pc_out <= pc_in;
             end if;
 
+            old_instruction <= ram2_data;
+
             -- write stage registers
             if (if_id_write = '1') then
                 -- instruction fetched
-                instruction <= ram2_data;
+                if (im_write = '1') then
+                    instruction <= old_instruction;
+                else
+                    instruction <= ram2_data;
+                end if;
 
                 -- pc + 1
                 pc <= pc_add1;
