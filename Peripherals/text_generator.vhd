@@ -2,32 +2,31 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
-library work;
-use work.common.all;
 
 ENTITY text_generator IS
   PORT(
     clkr      :  IN   STD_LOGIC;
-	 clkw      :  IN   STD_LOGIC;
-	 rst      :  IN   STD_LOGIC;
+    clkw      :  IN   STD_LOGIC;
+    rst      :  IN   STD_LOGIC;
     disp_ena :  IN   STD_LOGIC;  --display enable ('1' = display time, '0' = blanking time)
     row      :  IN   INTEGER;    --row pixel coordinate
     column   :  IN   INTEGER;    --column pixel coordinate
-	 write_ena:  IN   STD_LOGIC;
-	 write_char: IN STD_LOGIC_VECTOR(15 downto 0);
+    write_ena:  IN   STD_LOGIC;
+    write_char: IN STD_LOGIC_VECTOR(15 downto 0);
     red      :  OUT  STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0');  --red magnitude output to DAC
     green    :  OUT  STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0');  --green magnitude output to DAC
-    blue     :  OUT  STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0')); --blue magnitude output to DAC
+    blue     :  OUT  STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0')   --blue magnitude output to DAC
+  );
 END text_generator;
 
 ARCHITECTURE behavior OF text_generator IS
   
   component font_rom 
-   port(
+    port(
       clock: in std_logic;
       addr: in std_logic_vector(10 downto 0);
       data: out std_logic_vector(0 to 7)
-   );
+    );
   end component;
   
   COMPONENT video_ram IS
