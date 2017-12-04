@@ -64,6 +64,7 @@ architecture Computer_beh of Computer is
             if_id_write: in std_logic;
             im_read: in std_logic;
             im_write: in std_logic;
+            control_address: in std_logic;
 
             -- stage register outputs
             pc: out std_logic_vector(15 downto 0);
@@ -189,9 +190,11 @@ architecture Computer_beh of Computer is
 
             -- Data Memory
             ram1_data: inout std_logic_vector(15 downto 0);
+            ram2_data: in std_logic_vector(15 downto 0);
             ram1_pin: out type_ram_pin;
             -- Instruction Memory
             instruction_memory_control: out type_control_mem;
+            control_address: out std_logic;
             -- Serial port
             serial1_pin_in: in type_serial_pin_in;
             serial1_pin_out: out type_serial_pin_out;
@@ -280,6 +283,7 @@ architecture Computer_beh of Computer is
     signal mem_im_read: std_logic;
     signal mem_im_write: std_logic;
     signal mem_test: std_logic_vector(15 downto 0);
+    signal mem_control_address: std_logic;
 
     -- Forwarding's outputs
     signal forward_control_x: std_logic_vector(1 downto 0);
@@ -333,6 +337,7 @@ begin
             if_id_write => hazard_if_id_write,
             im_read => mem_im_read,
             im_write => mem_im_write,
+            control_address => mem_control_address,
 
             -- outputs
             pc => if_pc,
@@ -421,9 +426,11 @@ begin
             control_out_wb => wb_control_out_wb,
 
             ram1_data => data_memory_data,
+            ram2_data => instruction_memory_data,
             ram1_pin => data_memory_pin,
             instruction_memory_control.mem_read => mem_im_read,
             instruction_memory_control.mem_write => mem_im_write,
+            control_address => mem_control_address,
 
             serial1_pin_in => serial1_pin_in,
             serial1_pin_out => serial1_pin_out,
@@ -495,5 +502,5 @@ begin
         end if;
     end process;
 
-    --clk <= clk_manual;
+    -- clk <= clk_manual;
 end Computer_beh;
