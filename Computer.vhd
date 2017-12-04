@@ -227,6 +227,9 @@ architecture Computer_beh of Computer is
         );
     end component HazardDetection;
 
+    -- signal clk: std_logic := '1';
+    shared variable n: integer := 0;
+
     -- IF's outputs
     signal if_pc, if_instruction: std_logic_vector(15 downto 0);
     signal if_instruction_memory_data: std_logic_vector(15 downto 0);
@@ -418,5 +421,18 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    led <= ex_jump_pc(7 downto 2) & ex_pc_select & id_pc(7 downto 0);
+    led <= ex_pc_select & id_control_out_ex.branch_op & ex_jump_pc(2 downto 0) & id_pc(7 downto 0);
+
+    --process (clk_0, pause)
+    --begin
+    --    if pause = '0' then
+    --        n := 0;
+    --    elsif rising_edge(clk_0) then
+    --        n := n + 1;
+    --        if n = ratio then
+    --            clk <= not clk;
+    --            n := 0;
+    --        end if;
+    --    end if;
+    --end process;
 end Computer_beh;

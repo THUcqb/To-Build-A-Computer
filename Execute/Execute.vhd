@@ -251,10 +251,10 @@ begin
         cf => cf, zf => zf, sf => sf, vf => vf
     );
 
-    compZero: process(x_src_mux_out)
+    compZero: process(alu_input_x)
     begin
 
-        if (x_src_mux_out = "0000000000000000") then
+        if (alu_input_x = "0000000000000000") then
             zero_flag <= '1';
         else
             zero_flag <= '0';

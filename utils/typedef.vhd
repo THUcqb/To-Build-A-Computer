@@ -63,5 +63,5 @@ package utils is
         control_wb: type_control_wb;
     end record type_instruction;
     
-    constant delay_in_registers: time := 5 ns;
+    constant ratio: integer := 50000000;
 end package utils;
