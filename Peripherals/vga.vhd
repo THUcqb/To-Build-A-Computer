@@ -1,17 +1,31 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
+use ieee.std_logic_textio.all;
+
+library std;
+use std.textio.all;
+
 
 use work.commonPak.all;
+use work.utils.all;
 
 entity VGA is
     GENERIC(
-        textLength: INTEGER := 11
+        textLength: INTEGER := 11;
+        textHeight: INTEGER := 16;
+        textSep: INTEGER := 8;
+        startRow: INTEGER := 32;
+        startCol: INTEGER := 32;
+        indent: INTEGER := 8
     );
     PORT (
         clk, rst:  IN   STD_LOGIC;
 
         h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
-	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0)
+	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0);
+
+        register_file: in RegisterArray
 	); 
 end VGA;
 
@@ -45,15 +59,17 @@ architecture beh of VGA is
     SIGNAL row : INTEGER;
     SIGNAL pixel: STD_LOGIC;
 
-    SIGNAL displayText: STRING (1 to textLength) := (others => NUL);
-    SIGNAL top_left_corner: point_2d := (0, 0);
-    SIGNAL h_coord, v_coord: INTEGER;
+    shared VARIABLE displayText: STRING (1 to textLength) := (others => NUL);
+    shared VARIABLE top_left_corner: point_2d := (0, 0);
 
+    SIGNAL displayTextSig: STRING (1 to textLength) := (others => NUL);
+    SIGNAL top_left_corner_sig: point_2d := (0, 0);
     -- not in use
     SIGNAL disp_ena: STD_LOGIC;
     SIGNAL n_blank : STD_LOGIC;
     SIGNAL n_sync : STD_LOGIC; 
 
+    SIGNAL register_file_signal: RegisterArray;
 
 begin
 
@@ -90,21 +106,54 @@ begin
     g <= (others => pixel);
     b <= (others => pixel);
 
-    -- For test
-    displayText <= "Hello VGA  ";
-    top_left_corner <= (0, 0);
-    h_coord <= column;
-    v_coord <= row;
+    register_file_signal <= register_file;
+
+    select_text: process (clk)
+    begin
+        top_left_corner := (400, 300);
+        displayText := "ORZ";
+        if row < startRow + 1 * (textHeight + textSep) then
+            top_left_corner := (startCol, startRow);
+            displayText := "Registers";
+        elsif row < startRow + 2 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 1 * (textHeight + textSep));
+            displayText := "R0 = 0x" & to_hex_string(register_file_signal(0));
+        elsif row < startRow + 3 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 2 * (textHeight + textSep));
+            displayText := "R1 = 0x" & to_hex_string(register_file_signal(1));
+        elsif row < startRow + 4 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 3 * (textHeight + textSep));
+            displayText := "R2 = 0x" & to_hex_string(register_file_signal(2));
+        elsif row < startRow + 5 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 4 * (textHeight + textSep));
+            displayText := "R3 = 0x" & to_hex_string(register_file_signal(3));
+        elsif row < startRow + 6 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 5 * (textHeight + textSep));
+            displayText := "R4 = 0x" & to_hex_string(register_file_signal(4));
+        elsif row < startRow + 7 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 6 * (textHeight + textSep));
+            displayText := "R5 = 0x" & to_hex_string(register_file_signal(5));
+        elsif row < startRow + 8 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 7 * (textHeight + textSep));
+            displayText := "R6 = 0x" & to_hex_string(register_file_signal(6));
+        elsif row < startRow + 8 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 8 * (textHeight + textSep));
+            displayText := "R7 = 0x" & to_hex_string(register_file_signal(7));
+        end if;
+    end process;
+
+    displayTextSig <= displayText;
+    top_left_corner_sig <= top_left_corner; 
 
     pixel_on: entity work.Pixel_On_Text
     port map(
         clk => clk,
-        displayText => displayText,
+        displayText => displayTextSig,
 
-        position => top_left_corner,
+        position => top_left_corner_sig,
 
-        horzCoord => h_coord,
-        vertCoord => v_coord,
+        horzCoord => column,
+        vertCoord => row,
 
         pixel => pixel
     );

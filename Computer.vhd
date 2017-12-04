@@ -25,8 +25,12 @@ entity Computer is
         serial1_pin_in: in type_serial_pin_in;
         serial1_pin_out: out type_serial_pin_out;
 
-        led: out std_logic_vector(15 downto 0)
+        led: out std_logic_vector(15 downto 0);
 
+        vga_clk: in std_logic;
+
+        h_sync, v_sync: out std_logic;
+        r, g, b: out std_logic_vector(2 downto 0)
     );
 
 end Computer;
@@ -103,7 +107,10 @@ architecture Computer_beh of Computer is
             control_out_wb: out type_control_wb;
 
             -- Hazard detection
-            id_branch: out std_logic
+            id_branch: out std_logic;
+
+        -- display
+            register_file: out RegisterArray
         );
     end component InstructionDecode;
 
@@ -281,6 +288,7 @@ architecture Computer_beh of Computer is
     signal hazard_if_id_write: std_logic;
     signal hazard_bubble_select: std_logic;
 
+    signal register_file: RegisterArray;
 begin
     instruction_fetch: InstructionFetch
         port map
@@ -327,7 +335,10 @@ begin
             control_out_ex => id_control_out_ex,
             control_out_mem => id_control_out_mem,
             control_out_wb => id_control_out_wb,
-            id_branch => id_branch
+            id_branch => id_branch,
+
+            -- Display
+            register_file => register_file
         );
     id_rx_before_register <= "0" & if_instruction(10 downto 8);
     id_ry_before_register <= "0" & if_instruction(7 downto 5);
@@ -424,6 +435,21 @@ begin
             pc_write => hazard_pc_write,
             if_id_write => hazard_if_id_write,
             bubble_select => hazard_bubble_select
+        );
+
+    display: entity work.vga
+        port map
+        (
+            clk => vga_clk,
+            rst => rst,
+
+            h_sync => h_sync,
+            v_sync => v_sync,
+            r => r,
+            g => g,
+            b => b,
+
+            register_file => register_file
         );
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);

@@ -75,6 +75,8 @@ package commonPak is
 
 	function log2_float(val : positive) return natural;
 
+    function to_hex_string(s: in std_logic_vector) return string;
+
 end commonPak;
 
 package body commonPak is
@@ -82,4 +84,42 @@ package body commonPak is
 	begin
 		return integer(ceil(log2(real(val))));
 	end function;
+
+    function to_hex_string(s: in std_logic_vector) 
+    return string 
+    is 
+        --- Locals to make the indexing easier 
+        --constant s_norm: std_logic_vector(4 to s'length+3) := s; 
+        variable result: string (1 to s'length/4); 
+        --- A subtype to keep the VHDL compiler happy 
+        --- (the rules about data types in a CASE are quite strict) 
+        subtype slv4 is std_logic_vector(1 to 4); 
+    begin 
+        assert (s'length mod 4) = 0 
+        report "SLV must be a multiple of 4 bits" 
+        severity FAILURE; 
+
+        for i in result'range loop 
+            case slv4'(s((i-1)*4+3 downto (i-1)*4)) is 
+                when "0000" => result(s'length/4 - i + 1) := '0'; 
+                when "0001" => result(s'length/4 - i + 1) := '1'; 
+                when "0010" => result(s'length/4 - i + 1) := '2'; 
+                when "0011" => result(s'length/4 - i + 1) := '3'; 
+                when "0100" => result(s'length/4 - i + 1) := '4'; 
+                when "0101" => result(s'length/4 - i + 1) := '5'; 
+                when "0110" => result(s'length/4 - i + 1) := '6'; 
+                when "0111" => result(s'length/4 - i + 1) := '7'; 
+                when "1000" => result(s'length/4 - i + 1) := '8'; 
+                when "1001" => result(s'length/4 - i + 1) := '9'; 
+                when "1010" => result(s'length/4 - i + 1) := 'A'; 
+                when "1011" => result(s'length/4 - i + 1) := 'B'; 
+                when "1100" => result(s'length/4 - i + 1) := 'C'; 
+                when "1101" => result(s'length/4 - i + 1) := 'D'; 
+                when "1110" => result(s'length/4 - i + 1) := 'E'; 
+                when "1111" => result(s'length/4 - i + 1) := 'F'; 
+                when others => result(s'length/4 - i + 1) := 'x';
+            end case; 
+        end loop; 
+        return result; 
+    end; 
 end commonPak;

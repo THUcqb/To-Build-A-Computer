@@ -5,6 +5,8 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 package utils is
 
+    type RegisterArray is array (10 downto 0) of std_logic_vector(15 downto 0);
+
     type type_ram_pin is record
         address: std_logic_vector(17 downto 0);
         oe, we, en: std_logic;
