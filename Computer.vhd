@@ -428,16 +428,16 @@ begin
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);
 
-    --process (clk_0)
-    --begin
-    --    if rising_edge(clk_0) then
-    --        n := n + 1;
-    --        if n = ratio then
-    --            clk <= not clk;
-    --            n := 0;
-    --        end if;
-    --    end if;
-    --end process;
+    process (clk_0)
+    begin
+        if rising_edge(clk_0) then
+            n := n + 1;
+            if n = ratio then
+                clk <= not clk;
+                n := 0;
+            end if;
+        end if;
+    end process;
 
-    clk <= clk_manual;
+    --clk <= clk_manual;
 end Computer_beh;
