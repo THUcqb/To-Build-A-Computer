@@ -5,6 +5,16 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 package utils is
 
+    type type_flash_pin is record
+        flash_byte : std_logic;--BYTE#
+        flash_vpen : std_logic;
+        flash_ce : std_logic;
+        flash_oe : std_logic;
+        flash_we : std_logic;
+        flash_rp : std_logic;
+        flash_addr : std_logic_vector(22 downto 1);
+    end record type_flash_pin;
+
     type RegisterArray is array (10 downto 0) of std_logic_vector(15 downto 0);
 
     type type_ram_pin is record
@@ -64,6 +74,6 @@ package utils is
         control_mem: type_control_mem;
         control_wb: type_control_wb;
     end record type_instruction;
-    
+
     constant ratio: integer := 1;
 end package utils;

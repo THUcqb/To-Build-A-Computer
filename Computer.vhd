@@ -10,8 +10,7 @@ entity Computer is
     port
     (
         -- clock
-        clk_0, rst: in std_logic;
-        clk_manual: in std_logic;
+        clk_11, clk_0, clk_manual, rst_button : in std_logic;
 
         -- Instruction memory - RAM 2
         instruction_memory_data: inout std_logic_vector(15 downto 0);
@@ -27,8 +26,13 @@ entity Computer is
 
         led: out std_logic_vector(15 downto 0);
 
+        -- VGA pin
         h_sync, v_sync: out std_logic;
-        r, g, b: out std_logic_vector(2 downto 0)
+        r, g, b: out std_logic_vector(2 downto 0);
+
+        -- Flash
+        flash_pin: out type_flash_pin;
+        flash_data : inout std_logic_vector(15 downto 0)
     );
 
 end Computer;
@@ -287,7 +291,33 @@ architecture Computer_beh of Computer is
     signal hazard_bubble_select: std_logic;
 
     signal register_file: RegisterArray;
+
+    -- boot
+    signal rst: std_logic;
+    signal boot_complete: std_logic;
+    signal boot_instruction_memory_pin: type_ram_pin;
+
 begin
+    rst <= '0' when boot_complete = '0' else rst_button;
+
+    instruction_memory_pin <=
+        boot_instruction_memory_pin when boot_complete = '0' else
+        if_instruction_memory_pin;
+
+    boot: entity work.boot
+        port map (
+            clk => clk,
+            rst => rst,
+
+            instruction_memory_data => if_instruction_memory_data,
+            instruction_memory_pin => boot_instruction_memory_pin,
+
+            flash_pin => flash_pin,
+            flash_data => flash_data,
+
+            complete => boot_complete
+        );
+
     instruction_fetch: InstructionFetch
         port map
         (
@@ -309,7 +339,6 @@ begin
             ram2_data => if_instruction_memory_data,
             ram2_pin => if_instruction_memory_pin
         );
-    instruction_memory_pin <= if_instruction_memory_pin;
     instruction_memory_data <= if_instruction_memory_data;
 
     instruction_decode: InstructionDecode
