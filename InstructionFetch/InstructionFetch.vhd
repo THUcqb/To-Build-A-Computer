@@ -147,7 +147,7 @@ begin
             -- write stage registers
             if (if_id_write = '1') then
                 -- instruction fetched
-                if (im_write = '1') then
+                if (control_address = '1') then
                     instruction <= old_instruction;
                 else
                     instruction <= ram2_data;
