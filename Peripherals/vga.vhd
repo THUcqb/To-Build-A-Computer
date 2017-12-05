@@ -136,7 +136,7 @@ begin
         elsif row < startRow + 8 * (textHeight + textSep) then
             top_left_corner := (1 * indent + startCol, startRow + 7 * (textHeight + textSep));
             displayText := "R6 = 0x" & to_hex_string(register_file_signal(6));
-        elsif row < startRow + 8 * (textHeight + textSep) then
+        elsif row < startRow + 9 * (textHeight + textSep) then
             top_left_corner := (1 * indent + startCol, startRow + 8 * (textHeight + textSep));
             displayText := "R7 = 0x" & to_hex_string(register_file_signal(7));
         end if;

@@ -27,18 +27,19 @@ architecture memory_bev of Memory is
 begin
 
     --  Disable when resetting
-    pin.en <= '1' when rst = '0' else
+    pin.en <= 'Z' when rst = '0' else
               '0';
     --  Disable when writing
-    pin.oe <= '1' when rst = '0' else
+    pin.oe <= 'Z' when rst = '0' else
               '0' when control_mem.mem_read = '1' else
               '1';
     --  Enable only when in writing state 2 (unless resetting)
-    pin.we <= '1' when rst = '0' else
+    pin.we <= 'Z' when rst = '0' else
               '0' when control_mem.mem_write = '1' and clk = '0' else
               '1';
 
-    pin.address <= "00" & address;
+    pin.address <= (others => 'Z') when rst = '0' else
+                    "00" & address;
 
     --  Set to Z when preparing read.
     data <= write_data when control_mem.mem_write = '1' else
