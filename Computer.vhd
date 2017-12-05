@@ -169,7 +169,7 @@ architecture Computer_beh of Computer is
     component MemoryAndWriteBack is
         port(
         -- clock
-            clk: in std_logic;
+            clk, clk_50: in std_logic;
         -- reset
             rst: in std_logic;
 
@@ -201,6 +201,9 @@ architecture Computer_beh of Computer is
             -- Serial port
             serial1_pin_in: in type_serial_pin_in;
             serial1_pin_out: out type_serial_pin_out;
+            -- PS2
+            ps2_clk, ps2_data: in std_logic;
+
             test: out std_logic_vector(15 downto 0)
         );
     end component MemoryAndWriteBack;
@@ -416,6 +419,7 @@ begin
         port map
         (
             clk => clk,
+            clk_50 => clk_0,
             rst => rst,
             alu_result => ex_alu_result,
             write_data => ex_write_data,
@@ -437,6 +441,9 @@ begin
 
             serial1_pin_in => serial1_pin_in,
             serial1_pin_out => serial1_pin_out,
+            -- PS2
+            ps2_clk => ps2_clk,
+            ps2_data => ps2_data,
 
             test => mem_test
         );
@@ -489,10 +496,10 @@ begin
 
             register_file => register_file,
 
-            flash_pin => flash_pin_signal,
+            flash_pin => flash_pin_signal
 
-            ps2_clk => ps2_clk,
-            ps2_data => ps2_data
+            -- ps2_clk => ps2_clk,
+            -- ps2_data => ps2_data
         );
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);

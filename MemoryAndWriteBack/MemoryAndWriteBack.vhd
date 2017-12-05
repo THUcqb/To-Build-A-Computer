@@ -10,7 +10,7 @@ use work.constant_instruction.all;
 entity MemoryAndWriteBack is
     port(
     -- clock and reset
-        clk, rst: in std_logic;
+        clk, clk_50, rst: in std_logic;
 
     -- IN
         -- Data
@@ -41,6 +41,8 @@ entity MemoryAndWriteBack is
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
         serial1_pin_out: out type_serial_pin_out;
+        -- PS2
+        ps2_clk, ps2_data: in std_logic;
 
         test: out std_logic_vector(15 downto 0)
     );
@@ -52,7 +54,7 @@ architecture memory_and_write_back_beh of MemoryAndWriteBack is
     component MemoryRouter is
         port(
         -- clock
-            clk, rst: in std_logic;
+            clk, clk_50, rst: in std_logic;
 
         -- IN
             -- Data
@@ -76,7 +78,9 @@ architecture memory_and_write_back_beh of MemoryAndWriteBack is
             instruction_memory_control: out type_control_mem;
             -- Serial port
             serial1_pin_in: in type_serial_pin_in;
-            serial1_pin_out: out type_serial_pin_out
+            serial1_pin_out: out type_serial_pin_out;
+            -- PS2
+            ps2_clk, ps2_data: in std_logic
         );
     end component MemoryRouter;
 
@@ -102,6 +106,7 @@ begin
     memory_router: MemoryRouter
         port map(
             clk => clk,
+            clk_50 => clk_50,
             rst => rst,
             control_mem => control_in_mem,
             address => alu_result,
@@ -115,7 +120,10 @@ begin
             ram2_data => ram2_data,
             instruction_memory_control => instruction_memory_control,
             serial1_pin_in => serial1_pin_in,
-            serial1_pin_out => serial1_pin_out
+            serial1_pin_out => serial1_pin_out,
+            -- PS2
+            ps2_clk => ps2_clk,
+            ps2_data => ps2_data
         );
 
     mux_data_to_write_back: Mux2

@@ -27,10 +27,10 @@ entity VGA is
 
         register_file: in RegisterArray;
 
-        flash_pin: in type_flash_pin;
+        flash_pin: in type_flash_pin
 
-        ps2_clk: in std_logic;
-        ps2_data: in std_logic
+        -- ps2_clk: in std_logic;
+        -- ps2_data: in std_logic
 	);
 end VGA;
 
@@ -77,8 +77,8 @@ architecture beh of VGA is
     SIGNAL register_file_signal: RegisterArray;
 
     -- keyboard
-    SIGNAL ascii_new: STD_LOGIC;
-    SIGNAL ascii_code: STD_LOGIC_VECTOR(6 downto 0);
+    -- SIGNAL ascii_new: STD_LOGIC;
+    -- SIGNAL ascii_code: STD_LOGIC_VECTOR(6 downto 0);
 
 begin
 
@@ -155,9 +155,9 @@ begin
             else
                 displayText := "flash_addr = 0x" & to_hex_string(flash_pin.flash_addr(16 downto 1));
             end if;
-        elsif row < startRow + 16 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 15 * (textHeight + textSep));
-            displayText := "Key = " & to_hex_string("000000000" & ascii_code);
+        -- elsif row < startRow + 16 * (textHeight + textSep) then
+        --     top_left_corner := (1 * indent + startCol, startRow + 15 * (textHeight + textSep));
+        --     displayText := "Key = " & to_hex_string("000000000" & ascii_code);
         end if;
     end process;
 
@@ -180,13 +180,13 @@ begin
         pixel => pixel
     );
 
-    keyboard: entity work.ps2_keyboard_to_ascii
-    port map(
-        clk => clk,
-        ps2_clk => ps2_clk,
-        ps2_data => ps2_data,
-        ascii_new => ascii_new,
-        ascii_code => ascii_code
-    );
+    -- keyboard: entity work.ps2_keyboard_to_ascii
+    -- port map(
+    --     clk => clk,
+    --     ps2_clk => ps2_clk,
+    --     ps2_data => ps2_data,
+    --     ascii_new => ascii_new,
+    --     ascii_code => ascii_code
+    -- );
 
 end beh;
