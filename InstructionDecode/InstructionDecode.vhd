@@ -197,8 +197,12 @@ begin
     i7 <= (others => '1');
 
     lock_pc <= if_pc;
-    lock_rx <= "0" & instruction(10 downto 8);
-    lock_ry <= "0" & instruction(7 downto 5);
+    lock_rx <= "0" & instruction(7 downto 5) when instruction(15 downto 11) = "11010" else
+               "0" & instruction(10 downto 8);
+
+    lock_ry <= "0" & instruction(10 downto 8) when instruction(15 downto 11) = "11010" else
+               "0" & instruction(7 downto 5);
+
     lock_rz <= "0" & instruction(4 downto 2);
 
     -- update output data
