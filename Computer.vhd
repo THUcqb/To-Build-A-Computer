@@ -32,7 +32,10 @@ entity Computer is
 
         -- Flash
         flash_pin: out type_flash_pin;
-        flash_data : inout std_logic_vector(15 downto 0)
+        flash_data : inout std_logic_vector(15 downto 0);
+
+        -- PS2
+        ps2_clk, ps2_data: in std_logic
     );
 
 end Computer;
@@ -486,7 +489,10 @@ begin
 
             register_file => register_file,
 
-            flash_pin => flash_pin_signal
+            flash_pin => flash_pin_signal,
+
+            ps2_clk => ps2_clk,
+            ps2_data => ps2_data
         );
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);

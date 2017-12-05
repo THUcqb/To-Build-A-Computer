@@ -166,3 +166,6 @@ NET "flash_data[12]" LOC = G4;
 NET "flash_data[13]" LOC = G3;
 NET "flash_data[14]" LOC = F2;
 NET "flash_data[15]" LOC = F1;
+
+NET "ps2_clk" LOC = U6;
+NET "ps2_data" LOC = V6;
