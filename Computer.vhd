@@ -27,8 +27,6 @@ entity Computer is
 
         led: out std_logic_vector(15 downto 0);
 
-        vga_clk: in std_logic;
-
         h_sync, v_sync: out std_logic;
         r, g, b: out std_logic_vector(2 downto 0)
     );
@@ -440,7 +438,7 @@ begin
     display: entity work.vga
         port map
         (
-            clk => vga_clk,
+            clk => clk_0,
             rst => rst,
 
             h_sync => h_sync,

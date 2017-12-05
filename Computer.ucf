@@ -105,8 +105,6 @@ NET "serial1_pin_in_ready" LOC = A16;
 NET "serial1_pin_in_tbre" LOC = D14;
 NET "serial1_pin_in_tsre" LOC = N9;
 
-NET "vga_clk" LOC = B9;
-
 NET "h_sync" LOC = D6;
 NET "v_sync" LOC = E6;
 
@@ -117,5 +115,6 @@ NET "g[0]" LOC = B4;
 NET "g[1]" LOC = C4;
 NET "g[2]" LOC = C5;
 NET "b[0]" LOC = D5;
+NET "b[1]" LOC = A6;
 NET "b[2]" LOC = B6;
 
