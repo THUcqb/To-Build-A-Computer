@@ -1,4 +1,6 @@
 # intermediate build files
+
+out
 *.debug
 *.log
 *.tcl
