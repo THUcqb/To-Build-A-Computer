@@ -37,7 +37,7 @@ begin
         if (((id_ex_control_mem.mem_read = '1' and
             (if_id_rx = id_ex_rd or if_id_ry = id_ex_rd)))
             or
-            ((id_ex_control_mem.mem_write = '1' and write_address(15) = '0'))) then
+            (((id_ex_control_mem.mem_write = '1' or id_ex_control_mem.mem_read = '1') and write_address(15) = '0'))) then
             bubble_select <= '1';
             pc_write <= '0';
             if_id_write <= '0';

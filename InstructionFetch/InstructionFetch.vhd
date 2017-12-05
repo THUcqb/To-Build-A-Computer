@@ -30,6 +30,7 @@ entity InstructionFetch is
         if_id_write: in std_logic;
         im_read: in std_logic;
         im_write: in std_logic;
+        control_address: in std_logic;
 
         -- stage register outputs
         pc: out std_logic_vector(15 downto 0);
@@ -113,7 +114,7 @@ begin
     (
         i0 => pc_out,
         i1 => write_address,
-        s => im_write,
+        s => control_address,
         o => address
     );
 
@@ -146,7 +147,7 @@ begin
             -- write stage registers
             if (if_id_write = '1') then
                 -- instruction fetched
-                if (im_write = '1') then
+                if (control_address = '1') then
                     instruction <= old_instruction;
                 else
                     instruction <= ram2_data;

@@ -33,9 +33,11 @@ entity MemoryAndWriteBack is
 
         -- Data Memory
         ram1_data: inout std_logic_vector(15 downto 0);
+        ram2_data: in std_logic_vector(15 downto 0);
         ram1_pin: out type_ram_pin;
         -- Instruction Memory
         instruction_memory_control: out type_control_mem;
+        control_address: out std_logic;
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
         serial1_pin_out: out type_serial_pin_out;
@@ -63,10 +65,12 @@ architecture memory_and_write_back_beh of MemoryAndWriteBack is
         -- OUT
             -- read_data
             read_data: buffer std_logic_vector(15 downto 0);
+            control_address: out std_logic;
 
         -- PIN
             -- Data Memory
             ram1_data: inout std_logic_vector(15 downto 0);
+            ram2_data: in std_logic_vector(15 downto 0);
             ram1_pin: out type_ram_pin;
             -- Instruction Memory
             instruction_memory_control: out type_control_mem;
@@ -104,9 +108,11 @@ begin
             write_data => write_data,
 
             read_data => read_data,
+            control_address => control_address,
 
             ram1_pin => ram1_pin,
             ram1_data => ram1_data,
+            ram2_data => ram2_data,
             instruction_memory_control => instruction_memory_control,
             serial1_pin_in => serial1_pin_in,
             serial1_pin_out => serial1_pin_out
