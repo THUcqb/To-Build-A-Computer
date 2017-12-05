@@ -27,14 +27,14 @@ architecture memory_bev of Memory is
 begin
 
     --  Disable when resetting
-    pin.en <= 'Z' when rst = '0' else
+    pin.en <= '1' when rst = '0' else
               '0';
     --  Disable when writing
-    pin.oe <= 'Z' when rst = '0' else
+    pin.oe <= '1' when rst = '0' else
               '0' when control_mem.mem_read = '1' else
               '1';
     --  Enable only when in writing state 2 (unless resetting)
-    pin.we <= 'Z' when rst = '0' else
+    pin.we <= '1' when rst = '0' else
               '0' when control_mem.mem_write = '1' and clk = '0' else
               '1';
 
