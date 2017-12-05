@@ -12,7 +12,7 @@ use work.utils.all;
 
 entity VGA is
     GENERIC(
-        textLength: INTEGER := 11;
+        textLength: INTEGER := 20;
         textHeight: INTEGER := 16;
         textSep: INTEGER := 8;
         startRow: INTEGER := 32;
@@ -25,13 +25,15 @@ entity VGA is
         h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
 	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0);
 
-        register_file: in RegisterArray
-	); 
+        register_file: in RegisterArray;
+
+        flash_pin: in type_flash_pin
+	);
 end VGA;
 
 architecture beh of VGA is
 
-    COMPONENT vga_controller 
+    COMPONENT vga_controller
         GENERIC(
             h_pulse  :  INTEGER;   --horiztonal sync pulse width in pixels
             h_bp     :  INTEGER;   --horiztonal back porch width in pixels
@@ -67,13 +69,13 @@ architecture beh of VGA is
     -- not in use
     SIGNAL disp_ena: STD_LOGIC;
     SIGNAL n_blank : STD_LOGIC;
-    SIGNAL n_sync : STD_LOGIC; 
+    SIGNAL n_sync : STD_LOGIC;
 
     SIGNAL register_file_signal: RegisterArray;
 
 begin
 
-	controller: vga_controller 
+	controller: vga_controller
     generic map (
         h_pulse => 120,   --horiztonal sync pulse width in pixels
         h_bp => 64,   --horiztonal back porch width in pixels
@@ -87,18 +89,18 @@ begin
         v_pol => '0'  --vertical sync pulse polarity (1 = positive, 0 = negative)
     )
     port map(
-        pixel_clk=>clk, 
-        reset_n=>rst, 
+        pixel_clk=>clk,
+        reset_n=>rst,
 
-        column=>column, 
-        row=>row, 
+        column=>column,
+        row=>row,
 
-        h_sync=>h_sync, 
-        v_sync=>v_sync, 
+        h_sync=>h_sync,
+        v_sync=>v_sync,
 
         -- not in use
-        disp_ena=>disp_ena, 
-        n_blank=>n_blank, 
+        disp_ena=>disp_ena,
+        n_blank=>n_blank,
         n_sync=>n_sync
     );
 
@@ -139,13 +141,23 @@ begin
         elsif row < startRow + 9 * (textHeight + textSep) then
             top_left_corner := (1 * indent + startCol, startRow + 8 * (textHeight + textSep));
             displayText := "R7 = 0x" & to_hex_string(register_file_signal(7));
+        elsif row < startRow + 15 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 14 * (textHeight + textSep));
+            if flash_pin.flash_addr(16 downto 1) = x"4000" then
+                displayText := "Welcome";
+            else
+                displayText := "flash_addr = 0x" & to_hex_string(flash_pin.flash_addr(16 downto 1));
+            end if;
         end if;
     end process;
 
     displayTextSig <= displayText;
-    top_left_corner_sig <= top_left_corner; 
+    top_left_corner_sig <= top_left_corner;
 
     pixel_on: entity work.Pixel_On_Text
+    generic map (
+        textLength => textLength
+    )
     port map(
         clk => clk,
         displayText => displayTextSig,
@@ -157,6 +169,5 @@ begin
 
         pixel => pixel
     );
-    
-end beh;
 
+end beh;
