@@ -52,7 +52,7 @@ architecture Behavioral of clk_1152 is
         begin
             if (clk'event and clk = '1') then
                 --if (count = 575) then
-                if (count = 2500) then
+                if (count = 1000) then
                     count <= (others => '0');
                     clk_tmp <= not clk_tmp;
                 else

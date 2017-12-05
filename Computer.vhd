@@ -296,7 +296,7 @@ architecture Computer_beh of Computer is
     signal rst: std_logic;
     signal boot_complete: std_logic;
     signal boot_instruction_memory_pin: type_ram_pin;
-
+    signal flash_pin_signal: type_flash_pin;
 begin
     rst <= '0' when boot_complete = '0' else rst_button;
 
@@ -304,15 +304,16 @@ begin
         boot_instruction_memory_pin when boot_complete = '0' else
         if_instruction_memory_pin;
 
+    flash_pin <= flash_pin_signal;
     boot: entity work.boot
         port map (
             clk => clk_11,
-            rst => '1',
+            rst => rst_button,
 
             instruction_memory_data => if_instruction_memory_data,
             instruction_memory_pin => boot_instruction_memory_pin,
 
-            flash_pin => flash_pin,
+            flash_pin => flash_pin_signal,
             flash_data => flash_data,
 
             complete => boot_complete
@@ -468,7 +469,7 @@ begin
         port map
         (
             clk => clk_0,
-            rst => rst,
+            rst => rst_button,
 
             h_sync => h_sync,
             v_sync => v_sync,
@@ -476,7 +477,9 @@ begin
             g => g,
             b => b,
 
-            register_file => register_file
+            register_file => register_file,
+
+            flash_pin => flash_pin_signal
         );
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);

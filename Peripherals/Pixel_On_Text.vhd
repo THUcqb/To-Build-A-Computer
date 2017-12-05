@@ -1,7 +1,7 @@
 -- Pixel_On_Text determines if the current pixel is on text
 -- param:
 --   textlength, use to init the string
--- input: 
+-- input:
 --   VGA clock(the clk you used to update VGA)
 --   display text
 --   top left corner of the text box
@@ -22,7 +22,7 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 -- note this line.The package is compiled to this directory by default.
--- so don't forget to include this directory. 
+-- so don't forget to include this directory.
 library work;
 -- this line also is must.This includes the particular package into your program.
 use work.commonPak.all;
@@ -30,7 +30,7 @@ use work.commonPak.all;
 entity Pixel_On_Text is
 	generic(
 	   -- needed for init displayText, the default value 11 is just a random number
-       textLength: integer := 11
+       textLength: integer := 20
 	);
 	port (
 		clk: in std_logic;
@@ -40,7 +40,7 @@ entity Pixel_On_Text is
 		-- current pixel postion
 		horzCoord: in integer;
 		vertCoord: in integer;
-		
+
 		pixel: out std_logic := '0'
 	);
 
@@ -72,13 +72,13 @@ begin
 		addr => fontAddress,
 		fontRow => charBitInRow
 	);
-	
+
 	pixelOn: process(clk)
 		variable inXRange: boolean := false;
 		variable inYRange: boolean := false;
 	begin
         if rising_edge(clk) then
-            
+
             -- reset
             inXRange := false;
             inYRange := false;
@@ -87,18 +87,18 @@ begin
             if horzCoord >= position.x and horzCoord < position.x + (FONT_WIDTH * textlength) then
                 inXRange := true;
             end if;
-            
+
             -- If current pixel is in the vertical range of text
             if vertCoord >= position.y and vertCoord < position.y + FONT_HEIGHT then
                 inYRange := true;
             end if;
-            
+
             -- need to check if the pixel is on for text
             if inXRange and inYRange then
                 -- FONT_WIDTH-bitPosition: we are reverting the charactor
                 if charBitInRow(FONT_WIDTH-bitPosition) = '1' then
                     pixel <= '1';
-                end if;					
+                end if;
             end if;
 
 		end if;
