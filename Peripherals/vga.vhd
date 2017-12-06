@@ -30,7 +30,9 @@ entity VGA is
         flash_pin: in type_flash_pin;
 
         ps2_clk: in std_logic;
-        ps2_data: in std_logic
+        ps2_data: in std_logic;
+        instruction: in std_logic_vector(15 downto 0);
+        pc: in std_logic_vector(15 downto 0)
 	);
 end VGA;
 
@@ -115,7 +117,7 @@ begin
     g <= (others => pixel);
     b <= (others => pixel);
 
-    -- register_file_signal <= register_file;
+    register_file_signal <= register_file;
 
     select_text: process (clk)
     begin
@@ -148,6 +150,14 @@ begin
         elsif row < startRow + 9 * (textHeight + textSep) then
             top_left_corner := (1 * indent + startCol, startRow + 8 * (textHeight + textSep));
             displayText := "R7 = 0x" & to_hex_string(register_file_signal(7));
+
+        elsif row < startRow + 11 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 10 * (textHeight + textSep));
+            displayText := "PC = 0x" & to_hex_string(pc);
+        elsif row < startRow + 12 * (textHeight + textSep) then
+            top_left_corner := (1 * indent + startCol, startRow + 11 * (textHeight + textSep));
+            displayText := "IN = 0x" & to_hex_string(instruction);
+
         elsif row < startRow + 15 * (textHeight + textSep) then
             top_left_corner := (1 * indent + startCol, startRow + 14 * (textHeight + textSep));
             if flash_pin.flash_addr(16 downto 1) = x"4000" then
