@@ -37,8 +37,8 @@ begin
    DCM_SP_INST : DCM_SP
    generic map( CLK_FEEDBACK => "1X",
             CLKDV_DIVIDE => 2.0,
-            CLKFX_DIVIDE => 4,
-            CLKFX_MULTIPLY => 3,
+            CLKFX_DIVIDE => 10,
+            CLKFX_MULTIPLY => 7,
             CLKIN_DIVIDE_BY_2 => FALSE,
             CLKIN_PERIOD => 20.000,
             CLKOUT_PHASE_SHIFT => "NONE",

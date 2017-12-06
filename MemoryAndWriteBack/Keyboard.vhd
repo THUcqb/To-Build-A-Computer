@@ -19,8 +19,6 @@ architecture beh of Keyboard is
     SIGNAL ascii_new: std_logic;
     SIGNAL ascii_code: std_logic_vector(6 downto 0);
 
-    SIGNAL ascii_buffer: std_logic_vector(6 downto 0);
-
     signal ready: std_logic;
 begin
 
@@ -36,7 +34,7 @@ begin
     -- For 0xBF03, the lowest bit stands for if keyboard input buffer ready
     -- For 0xBF02, return the bufferred data.
     data <= x"000" & "000" & ready when address = x"BF03" else
-            x"00" & '0' & ascii_buffer when address = x"BF02" else
+            x"00" & '0' & ascii_code when address = x"BF02" else
             (others => 'Z');
 
     process (ascii_new)
@@ -45,7 +43,6 @@ begin
             ready <= '0';
         elsif rising_edge(ascii_new) then
             ready <= '1';
-            ascii_buffer <= ascii_code;
         end if;
 
     end process;
