@@ -1,628 +1,735 @@
-[0000]   <0000> ADDSP3 R0 0000
-[0001]   <0000> ADDSP3 R0 0000
-[0002]   <0800> NOP
+ADDSP3 R0 0x0000
+ADDSP3 R0 0x0000
+NOP
 
-;保存用户程序寄存器的地址 
+;±£´æÓÃ»§³ÌÐò¼Ä´æÆ÷µÄµØÖ· 
 ;0xBF10  0xBF11 BF12 0xBF13 BF14 0xBF15
 ; R0    R1   R2   R3   R4   R5  
 
-[0003]   <1061> B 0061          ;START
-[0004]   <0800> NOP
+B START
+NOP
 
-DELINT:   ;中断处理程序
-[0005]   <0800> NOP
-[0006]   <0800> NOP
-[0007]   <0800> NOP
-[0008]   <6ebf> LI R6 00bf
-[0009]   <36c0> SLL R6 R6 0000
-[000a]   <4e10> ADDIU R6 0010
-[000b]   <de00> SW R6 R0 0000
-[000c]   <de21> SW R6 R1 0001
-[000d]   <de42> SW R6 R2 0002
-[000e]   <de84> SW R6 R4 0004
-[000f]   <dea5> SW R6 R5 0005
-[0010]   <9100> LW-SP R1 0000
-[0011]   <6301> ADDSP 0001
-[0012]   <68ff> LI R0 00ff
-[0013]   <e90c> AND R1 R0
-[0014]   <9200> LW-SP R2 0000
-[0015]   <6301> ADDSP 0001
-[0016]   <63ff> ADDSP ffff
-[0017]   <d300> SW-SP R3 0000
-[0018]   <63ff> ADDSP ffff
-[0019]   <d700> SW-SP R7 0000
-[001a]   <6b0f> LI R3 000f
-[001b]   <ef40> MFPC R7
-[001c]   <4f03> ADDIU R7 0003
-[001d]   <0800> NOP
-[001e]   <10ac> B 00ac
-[001f]   <0800> NOP
-[0020]   <6ebf> LI R6 00bf
-[0021]   <36c0> SLL R6 R6 0000
-[0022]   <de60> SW R6 R3 0000
-[0023]   <0800> NOP
-[0024]   <6ebf> LI R6 00bf
-[0025]   <36c0> SLL R6 R6 0000
-[0026]   <4e10> ADDIU R6 0010
-[0027]   <6800> LI R0 0000
-[0028]   <e82a> CMP R0 R1
-[0029]   <6102> BTNEZ 0002
-[002a]   <0800> NOP
-[002b]   <9e87> LW R6 R4 0007
-[002c]   <6820> LI R0 0020
-[002d]   <e82a> CMP R0 R1
-[002e]   <6102> BTNEZ 0002
-[002f]   <0800> NOP
-[0030]   <9e88> LW R6 R4 0008
-[0031]   <6810> LI R0 0010
-[0032]   <e82a> CMP R0 R1
-[0033]   <6102> BTNEZ 0002
-[0034]   <0800> NOP
-[0035]   <9e89> LW R6 R4 0009
-[0036]   <0800> NOP
-[0037]   <9ea6> LW R6 R5 0006
-[0038]   <eca2> SLT R4 R5
-[0039]   <610b> BTNEZ 000b
-[003a]   <0800> NOP
-[003b]   <de86> SW R6 R4 0006
-[003c]   <ef40> MFPC R7
-[003d]   <4f03> ADDIU R7 0003
-[003e]   <0800> NOP
-[003f]   <108b> B 008b
-[0040]   <0800> NOP
-[0041]   <6ebf> LI R6 00bf
-[0042]   <36c0> SLL R6 R6 0000
-[0043]   <de20> SW R6 R1 0000
-[0044]   <0800> NOP
-[0045]   <0800> NOP
-[0046]   <6b0f> LI R3 000f
-[0047]   <ef40> MFPC R7
-[0048]   <4f03> ADDIU R7 0003
-[0049]   <0800> NOP
-[004a]   <1080> B 0080
-[004b]   <0800> NOP
-[004c]   <6ebf> LI R6 00bf
-[004d]   <36c0> SLL R6 R6 0000
-[004e]   <de60> SW R6 R3 0000
-[004f]   <0800> NOP
-[0050]   <42c0> ADDIU3 R2 R6 0000
-[0051]   <f300> MFIH R3
-[0052]   <6880> LI R0 0080
-[0053]   <3000> SLL R0 R0 0000
-[0054]   <eb0d> OR R3 R0
-[0055]   <6fbf> LI R7 00bf
-[0056]   <37e0> SLL R7 R7 0000
-[0057]   <4f10> ADDIU R7 0010
-[0058]   <9f00> LW R7 R0 0000
-[0059]   <9f21> LW R7 R1 0001
-[005a]   <9f42> LW R7 R2 0002
-[005b]   <9f84> LW R7 R4 0004
-[005c]   <9fa5> LW R7 R5 0005
-[005d]   <9700> LW-SP R7 0000
-[005e]   <6301> ADDSP 0001
-[005f]   <6301> ADDSP 0001
-[0060]   <0800> NOP
-[0061]   <f301> MTIH R3
-[0062]   <ee00> JR R6
-[0063]   <93ff> LW-SP R3 00ff
-[0064]   <0800> NOP
-[0065]   <6807> LI R0 0007
-[0066]   <f001> MTIH R0
-[0067]   <68bf> LI R0 00bf
-[0068]   <3000> SLL R0 R0 0000
-[0069]   <4810> ADDIU R0 0010
-[006a]   <6400> MTSP R0
-[006b]   <0800> NOP
-[006c]   <6ebf> LI R6 00bf
-[006d]   <36c0> SLL R6 R6 0000
-[006e]   <4e10> ADDIU R6 0010
-[006f]   <6800> LI R0 0000
-[0070]   <de00> SW R6 R0 0000
-[0071]   <de01> SW R6 R0 0001
-[0072]   <de02> SW R6 R0 0002
-[0073]   <de03> SW R6 R0 0003
-[0074]   <de04> SW R6 R0 0004
-[0075]   <de05> SW R6 R0 0005
-[0076]   <de06> SW R6 R0 0006
-[0077]   <4801> ADDIU R0 0001
-[0078]   <de07> SW R6 R0 0007
-[0079]   <4801> ADDIU R0 0001
-[007a]   <de08> SW R6 R0 0008
-[007b]   <4801> ADDIU R0 0001
-[007c]   <de09> SW R6 R0 0009
-[007d]   <ef40> MFPC R7
-[007e]   <4f03> ADDIU R7 0003
-[007f]   <0800> NOP
-[0080]   <104a> B 004a
-[0081]   <6ebf> LI R6 00bf
-[0082]   <36c0> SLL R6 R6 0000
-[0083]   <684f> LI R0 004f
-[0084]   <de00> SW R6 R0 0000
-[0085]   <0800> NOP
-[0086]   <ef40> MFPC R7
-[0087]   <4f03> ADDIU R7 0003
-[0088]   <0800> NOP
-[0089]   <1041> B 0041
-[008a]   <6ebf> LI R6 00bf
-[008b]   <36c0> SLL R6 R6 0000
-[008c]   <684b> LI R0 004b
-[008d]   <de00> SW R6 R0 0000
-[008e]   <0800> NOP
-[008f]   <ef40> MFPC R7
-[0090]   <4f03> ADDIU R7 0003
-[0091]   <0800> NOP
-[0092]   <1038> B 0038
-[0093]   <6ebf> LI R6 00bf
-[0094]   <36c0> SLL R6 R6 0000
-[0095]   <680a> LI R0 000a
-[0096]   <de00> SW R6 R0 0000
-[0097]   <0800> NOP
-[0098]   <ef40> MFPC R7
-[0099]   <4f03> ADDIU R7 0003
-[009a]   <0800> NOP
-[009b]   <102f> B 002f
-[009c]   <6ebf> LI R6 00bf
-[009d]   <36c0> SLL R6 R6 0000
-[009e]   <680d> LI R0 000d
-[009f]   <de00> SW R6 R0 0000
-[00a0]   <0800> NOP
+DELINT:   ;ÖÐ¶Ï´¦Àí³ÌÐò
+    NOP
+    NOP
+    NOP
+    ;±£´æÓÃ»§³ÌÐòÏÖ³¡
+    LI R6 0xBF
+    SLL R6 R6 0x0000
+    ADDIU R6 0x10                   ;R6=0xBF10
+    SW R6 R0 0x0000
+    SW R6 R1 0x0001
+    SW R6 R2 0x0002
+    
 
-BEGIN:          ;检测命令
-        ;接收字符，保存到r1
+    
 
-[00a1]   <ef40> MFPC R7
-[00a2]   <4f03> ADDIU R7 0003
-[00a3]   <0800> NOP
-[00a4]   <1031> B 0031
-[00a5]   <0800> NOP
-[00a6]   <6ebf> LI R6 00bf
-[00a7]   <36c0> SLL R6 R6 0000
-[00a8]   <9e20> LW R6 R1 0000
-[00a9]   <6eff> LI R6 00ff
-[00aa]   <e9cc> AND R1 R6
-[00ab]   <0800> NOP
+    
+    ;R1=ÖÐ¶ÏºÅ
+    LW_SP R1 0x0000
+    ADDSP 0x0001
+    LI R0 0x00FF
+    AND R1 R0
+    
+    ;R2=Ó¦ÓÃ³ÌÐòµÄpc
+    LW_SP R2 0x0000
+    ADDSP 0x0001
+    
+    ;±£´ær3
+    ADDSP 0xFFFF
+    SW_SP R3 0x0000
 
-;检测是否为R命令
 
-[00ac]   <6852> LI R0 0052
-[00ad]   <e82a> CMP R0 R1
-[00ae]   <6032> BTEQZ 0032
-[00af]   <0800> NOP
+    
+    ;±£´æÓÃ»§³ÌÐò·µ»ØµØÖ·
+    ADDSP 0xFFFF
+    SW_SP R7 0x0000
+    
+    ;ÌáÊ¾ÖÕ¶Ë£¬½øÈëÖÐ¶Ï´¦Àí
+    LI R3 0x000F
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00
+    SW R6 R3 0x0000
+    NOP
+    ;Êä³öÖÐ¶ÏºÅ
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R1 0x0000
+    NOP
+    
+    ;ÌáÊ¾ÖÕ¶Ë£¬ÖÐ¶Ï´¦Àí½áÊø
+    LI R3 0x000F
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R3 0x0000
+    NOP
+    
+    ;R6±£´æ·µ»ØµØÖ·
+    ADDIU3 R2 R6 0x0000
+    
+    ;ÓÃr3=IH£¨¸ßÎ»±ä³É1£©
+    MFIH R3
+    LI R0 0x0080
+    SLL R0 R0 0x000
+    OR R3 R0
+    
+    ;»Ö¸´ÏÖ³¡
+    LI R7 0xBF
+    SLL R7 R7 0x0000
+    ADDIU R7 0x10                   ;R7=0xBF10
+    LW R7 R0 0x0000
+    LW R7 R1 0x0001
+    LW R7 R2 0x0002
+    
+    ;r7=ÓÃ»§³ÌÐò·µ»ØµØÖ·
+    LW_SP R7 0x0000
+    
+    ADDSP 0x0001
+    ADDSP 0x0001
+    NOP
+    MTIH R3;
+    JR R6
+    LW_SP R3 0x00FF
+    
+    NOP 
 
-;检测是否为D命令
 
-[00b0]   <6844> LI R0 0044
-[00b1]   <e82a> CMP R0 R1
-[00b2]   <604d> BTEQZ 004d
-[00b3]   <0800> NOP
-
-;检测是否为A命令
-
-[00b4]   <6841> LI R0 0041
-[00b5]   <e82a> CMP R0 R1
-[00b6]   <600e> BTEQZ 000e
-[00b7]   <0800> NOP
-
-;检测是否为U命令
-
-[00b8]   <6855> LI R0 0055
-[00b9]   <e82a> CMP R0 R1
-[00ba]   <6007> BTEQZ 0007
-[00bb]   <0800> NOP
-
-;检测是否为G命令
-
-[00bc]   <6847> LI R0 0047
-[00bd]   <e82a> CMP R0 R1
-[00be]   <6009> BTEQZ 0009
-[00bf]   <0800> NOP
-
-[00c0]   <17e0> B ffe0
-[00c1]   <0800> NOP
-
-;各处理块的入口
-GOTOUASM:
-[00c2]   <0800> NOP
-[00c3]   <10c0> B 00c0
-[00c4]   <0800> NOP
-GOTOASM:
-[00c5]   <0800> NOP
-[00c6]   <1082> B 0082
-[00c7]   <0800> NOP
-GOTOCOMPILE:
-[00c8]   <0800> NOP
-[00c9]   <1103> B 0103
-[00ca]   <0800> NOP
-
-;测试8251是否能写
-TESTW:  
-[00cb]   <0800> NOP
-[00cc]   <6ebf> LI R6 00bf
-[00cd]   <36c0> SLL R6 R6 0000
-[00ce]   <4e01> ADDIU R6 0001
-[00cf]   <9e00> LW R6 R0 0000
-[00d0]   <6e01> LI R6 0001
-[00d1]   <e8cc> AND R0 R6
-[00d2]   <20f8> BEQZ R0 fff8
-[00d3]   <0800> NOP
-[00d4]   <ef00> JR R7
-[00d5]   <0800> NOP
-
-;测试8251是否能读
-TESTR:  
-[00d6]   <0800> NOP
-[00d7]   <6ebf> LI R6 00bf
-[00d8]   <36c0> SLL R6 R6 0000
-[00d9]   <4e01> ADDIU R6 0001
-[00da]   <9e00> LW R6 R0 0000
-[00db]   <6e02> LI R6 0002
-[00dc]   <e8cc> AND R0 R6
-[00dd]   <20f8> BEQZ R0 fff8
-[00de]   <0800> NOP
-[00df]   <ef00> JR R7
-[00e0]   <0800> NOP
-
-SHOWREGS:    ;R命令，打印R0-R5
-[00e1]   <6906> LI R1 0006
-[00e2]   <6a06> LI R2 0006
-
-LOOP:
-[00e3]   <68bf> LI R0 00bf
-[00e4]   <3000> SLL R0 R0 0000
-[00e5]   <4810> ADDIU R0 0010
-[00e6]   <e22f> SUBU R2 R1 R3
-[00e7]   <e061> ADDU R0 R3 R0
-[00e8]   <9860> LW R0 R3 0000
-
-;发送低八位
-[00e9]   <ef40> MFPC R7
-[00ea]   <4f03> ADDIU R7 0003
-[00eb]   <0800> NOP
-[00ec]   <17de> B ffde
-[00ed]   <0800> NOP
-[00ee]   <6ebf> LI R6 00bf
-[00ef]   <36c0> SLL R6 R6 0000
-[00f0]   <de60> SW R6 R3 0000
-;发送高八位
-[00f1]   <3363> SRA R3 R3 0000
-[00f2]   <ef40> MFPC R7
-[00f3]   <4f03> ADDIU R7 0003
-[00f4]   <0800> NOP
-[00f5]   <17d5> B ffd5
-[00f6]   <0800> NOP
-[00f7]   <6ebf> LI R6 00bf
-[00f8]   <36c0> SLL R6 R6 0000
-[00f9]   <de60> SW R6 R3 0000
-
-[00fa]   <49ff> ADDIU R1 ffff
-[00fb]   <0800> NOP
-[00fc]   <29e6> BNEZ R1 ffe6 ;LOOP
-[00fd]   <0800> NOP
-[00fe]   <17a2> B ffa2 ;BEGIN
-[00ff]   <0800> NOP
-
-SHOWMEM:  ;查看内存 
-;D读取地址低位到r5
-[0100]   <ef40> MFPC R7
-[0101]   <4f03> ADDIU R7 0003
-[0102]   <0800> NOP
-[0103]   <17d2> B ffd2
-[0104]   <0800> NOP
-[0105]   <6ebf> LI R6 00bf
-[0106]   <36c0> SLL R6 R6 0000
-[0107]   <9ea0> LW R6 R5 0000
-[0108]   <6eff> LI R6 00ff
-[0109]   <edcc> AND R5 R6
-[010a]   <0800> NOP
-
-;读取地址高位到r1
-[010b]   <ef40> MFPC R7
-[010c]   <4f03> ADDIU R7 0003
-[010d]   <0800> NOP
-[010e]   <17c7> B ffc7
-[010f]   <0800> NOP
-[0110]   <6ebf> LI R6 00bf
-[0111]   <36c0> SLL R6 R6 0000
-[0112]   <9e20> LW R6 R1 0000
-[0113]   <6eff> LI R6 00ff
-[0114]   <e9cc> AND R1 R6
-[0115]   <0800> NOP
-
-;R1存储地址
-[0116]   <3120> SLL R1 R1 0000
-[0117]   <e9ad> OR R1 R5
-
-;读取显示次数低位到R5
-[0118]   <ef40> MFPC R7
-[0119]   <4f03> ADDIU R7 0003
-[011a]   <0800> NOP
-[011b]   <17ba> B ffba
-[011c]   <0800> NOP
-[011d]   <6ebf> LI R6 00bf
-[011e]   <36c0> SLL R6 R6 0000
-[011f]   <9ea0> LW R6 R5 0000
-[0120]   <6eff> LI R6 00ff
-[0121]   <edcc> AND R5 R6
-[0122]   <0800> NOP
-;读取显示次数高位到R2
-[0123]   <ef40> MFPC R7
-[0124]   <4f03> ADDIU R7 0003
-[0125]   <0800> NOP
-[0126]   <17af> B ffaf
-[0127]   <0800> NOP
-[0128]   <6ebf> LI R6 00bf
-[0129]   <36c0> SLL R6 R6 0000
-[012a]   <9e40> LW R6 R2 0000
-[012b]   <6eff> LI R6 00ff
-[012c]   <eacc> AND R2 R6
-[012d]   <0800> NOP
-[012e]   <3240> SLL R2 R2 0000
-[012f]   <eaad> OR R2 R5
-
-                ;循环发出   
+;init  0x8251
+START:
+    ;³õÊ¼»¯IH¼Ä´æÆ÷£¬×î¸ßÎ»Îª1Ê±£¬ÔÊÐíÖÐ¶Ï£¬Îª0Ê±²»ÔÊÐí¡£³õÊ¼»¯Îª0£¬kernel²»ÔÊÐíÖÐ¶Ï
+    LI R0 0x07
+    MTIH R0
+    ;³õÊ¼»¯Õ»µØÖ·
+    LI R0 0x00BF 
+    SLL R0 R0 0x0000
+    ADDIU R0 0x10                   ;R0=0xBF10 
+    MTSP R0
+    NOP
+    
+    ;ÓÃ»§¼Ä´æÆ÷Öµ³õÊ¼»¯
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000
+    ADDIU R6 0x10                   ;R6=0xBF10 
+    LI R0 0x0000
+    SW R6 R0 0x0000
+    SW R6 R0 0x0001
+    SW R6 R0 0x0002
+    SW R6 R0 0x0003
+    SW R6 R0 0x0004
+    SW R6 R0 0x0005
         
-MEMLOOP:
+    ;WELCOME
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LI R0 0x004F
+    SW R6 R0 0x0000
+    NOP
+    
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LI R0 0x004B
+    SW R6 R0 0x0000
+    NOP
+    
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LI R0 0x000A
+    SW R6 R0 0x0000
+    NOP
+    
+    MFPC R7 
+    ADDIU R7 0x0003  
+    NOP
+    B TESTW     
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LI R0 0x000D
+    SW R6 R0 0x0000
+    NOP
+    
+BEGIN:          ;¼ì²âÃüÁî
+    ;½ÓÊÕ×Ö·û£¬±£´æµ½r1
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTRR 
+    NOP
+    LI R0 0x0001
+    CMP R0 R1
+    BTEQZ DATA_FROM_SERIAL
+    NOP
 
-[0130]   <9960> LW R1 R3 0000
-[0131]   <ef40> MFPC R7
-[0132]   <4f03> ADDIU R7 0003
-[0133]   <0800> NOP
-[0134]   <1796> B ff96
-[0135]   <0800> NOP
-[0136]   <6ebf> LI R6 00bf
-[0137]   <36c0> SLL R6 R6 0000
-[0138]   <de60> SW R6 R3 0000
-[0139]   <3363> SRA R3 R3 0000
-[013a]   <ef40> MFPC R7
-[013b]   <4f03> ADDIU R7 0003
-[013c]   <0800> NOP
-[013d]   <178d> B ff8d
-[013e]   <0800> NOP
-[013f]   <6ebf> LI R6 00bf
-[0140]   <36c0> SLL R6 R6 0000
-[0141]   <de60> SW R6 R3 0000
-[0142]   <4901> ADDIU R1 0001
-[0143]   <4aff> ADDIU R2 ffff
-[0144]   <0800> NOP
-[0145]   <2aea> BNEZ R2 ffea
-[0146]   <0800> NOP
-[0147]   <1759> B ff59
-[0148]   <0800> NOP
+DATA_FROM_KEYBOARD:
+    LI R6 0x00BF
+    SLL R6 R6 0x0000
+    LW R6 R1 0x0002
+    SW R6 R1 0x0004
+    B DATA_CONTINUE
+    NOP
 
- ;汇编    
+DATA_FROM_SERIAL:
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R1 0x0000
+    LI R6 0x00ff 
+    AND R1 R6 
+    NOP 
+    
+
+    ;¼ì²âÊÇ·ñÎªRÃüÁî        
+    LI R0 0x0052
+    CMP R0 R1
+    BTEQZ SHOWREGS  
+    NOP 
+    ;¼ì²âÊÇ·ñÎªDÃüÁî
+    LI R0 0x0044
+    CMP R0 R1
+    BTEQZ SHOWMEM
+    NOP 
+    
+    ;¼ì²âÊÇ·ñÎªAÃüÁî
+    LI R0 0x0041
+    CMP R0 R1
+    BTEQZ GOTOASM
+    NOP 
+    
+    ;¼ì²âÊÇ·ñÎªUÃüÁî
+    LI R0 0x0055
+    CMP R0 R1
+    BTEQZ GOTOUASM
+    NOP 
+    ;¼ì²âÊÇ·ñÎªGÃüÁî
+    LI R0 0x0047
+    CMP R0 R1
+    BTEQZ GOTOCOMPILE
+    NOP     
+    
+DATA_CONTINUE:
+    B BEGIN
+    NOP
+
+;¸÷´¦Àí¿éµÄÈë¿Ú
+GOTOUASM:
+    NOP
+    B UASM
+    NOP
+GOTOASM:
+    NOP
+    B ASM
+    NOP
+    
+GOTOCOMPILE:
+    NOP
+    B COMPILE
+    NOP
+  
+    
+;²âÊÔ8251ÊÇ·ñÄÜÐ´
+TESTW:  
+    NOP         
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    ADDIU R6 0x0001 
+    LW R6 R0 0x0000 
+    LI R6 0x0001 
+    AND R0 R6 
+    BEQZ R0 TESTW     ;BF01&1=0 ÔòµÈ´ý  
+    NOP     
+    JR R7
+    NOP 
+    
+TESTR:  
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    ADDIU R6 0x0001 
+    LW R6 R0 0x0000 
+    LI R6 0x0002
+    AND R0 R6 
+    BEQZ R0 TESTR
+    NOP
+    JR R7
+    NOP
+    
+TESTRR:  
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    ADDIU R6 0x0001 
+    LW R6 R0 0x0000 
+    LI R6 0x0002
+    AND R0 R6 
+    LI R1 0x0001
+    BNEZ R0 TESTRR_END
+    NOP
+
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R0 0x0003
+    LI R6 0x0001
+    AND R0 R6 
+    LI R1 0x0002
+    BEQZ R0 TESTRR
+    NOP
+
+TESTRR_END:  
+    JR R7
+    NOP
+    
+    
+SHOWREGS:    ;RÃüÁî£¬´òÓ¡R0-R5
+    LI R1 0x0006  ;R1µÝ¼õ  
+    LI R2 0x0006   ;R2²»±ä
+    
+LOOP:
+    LI R0  0x00BF
+    SLL R0 R0 0x0000
+    ADDIU R0 0x0010
+    SUBU R2 R1 R3   ;R2=0,1,2,3
+    ADDU R0 R3 R0   ;R0=BF10...
+    LW R0 R3 0x0000    ;R3=ÓÃ»§³ÌÐòµÄ R0,R1,R2  
+
+    ;·¢ËÍµÍ°ËÎ»
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=BF00   
+    SW R6 R3 0x0000 
+    ;·¢ËÍ¸ß°ËÎ»
+    SRA R3 R3 0x0000
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R3 0x0000 
+    
+    ADDIU R1 0xFFFF
+    NOP
+    BNEZ R1 LOOP
+    NOP 
+    B BEGIN
+    NOP
+    
+
+    
+    
+
+    
+    
+    
+SHOWMEM:  ;²é¿´ÄÚ´æ 
+;D¶ÁÈ¡µØÖ·µÍÎ»µ½r5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000 
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    
+    ;¶ÁÈ¡µØÖ·¸ßÎ»µ½r1
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R1 0x0000
+    LI R6 0x00FF
+    AND R1 R6
+    NOP 
+    
+    
+    
+    ;R1´æ´¢µØÖ·
+    SLL R1 R1 0x0000
+    OR R1 R5
+    
+    ;¶ÁÈ¡ÏÔÊ¾´ÎÊýµÍÎ»µ½R5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    ;¶ÁÈ¡ÏÔÊ¾´ÎÊý¸ßÎ»µ½R2
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R2 0x0000
+    LI R6 0x00FF
+    AND R2 R6
+    NOP 
+    ;R2±£´æÄÚ´æ¸öÊý
+    SLL R2 R2 0x0000
+    OR R2 R5
+
+    
+        ;Ñ­»··¢³ö   
+    
+MEMLOOP:        
+    
+    LW R1 R3 0x0000    ;R3ÎªÄÚ´æÊý¾Ý    
+
+    ;·¢ËÍµÍ°ËÎ»
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R3 0x0000 
+    ;·¢ËÍ¸ß°ËÎ»
+
+    SRA R3 R3 0x0000
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R3 0x0000 
+    
+    ADDIU R1 0x0001   ;R1=µØÖ·¼Ó¼Ó¼Ó
+    ADDIU R2 0xFFFF
+    NOP
+    BNEZ R2 MEMLOOP
+    NOP 
+
+    B BEGIN
+    NOP     
+
+
+ ;»ã±à  
 ASM:  
+    ;AÃüÁî¶ÁÈ¡µØÖ·µÍÎ»µ½r5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    ;¶ÁÈ¡µØÖ·¸ßÎ»µ½r1
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R1 0x0000
+    LI R6 0x00FF
+    AND R1 R6
+    NOP 
+    
+    ;R1´æ´¢µØÖ·
+    SLL R1 R1 0x0000
+    OR R1 R5
+    
+    
+    
+    
+    ;¼ì²âµØÖ·ÊÇ·ñºÏ·¨
+    LI R0 0x0000
+    CMP R0 R1      
+  BTEQZ GOTOBEGIN
+    NOP 
+    
+ 
+    ;¶ÁÈ¡Êý¾ÝµÍÎ»µ½R5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    
 
-[0149]   <ef40> MFPC R7
-[014a]   <4f03> ADDIU R7 0003
-[014b]   <0800> NOP
-[014c]   <1789> B ff89
-[014d]   <0800> NOP
-[014e]   <6ebf> LI R6 00bf
-[014f]   <36c0> SLL R6 R6 0000
-[0150]   <9ea0> LW R6 R5 0000
-[0151]   <6eff> LI R6 00ff
-[0152]   <edcc> AND R5 R6
-[0153]   <0800> NOP
-[0154]   <ef40> MFPC R7
-[0155]   <4f03> ADDIU R7 0003
-[0156]   <0800> NOP
-[0157]   <177e> B ff7e
-[0158]   <0800> NOP
-[0159]   <6ebf> LI R6 00bf
-[015a]   <36c0> SLL R6 R6 0000
-[015b]   <9e20> LW R6 R1 0000
-[015c]   <6eff> LI R6 00ff
-[015d]   <e9cc> AND R1 R6
-[015e]   <0800> NOP
-[015f]   <3120> SLL R1 R1 0000
-[0160]   <e9ad> OR R1 R5
-[0161]   <6800> LI R0 0000
-[0162]   <e82a> CMP R0 R1
-[0163]   <601d> BTEQZ 001d
-[0164]   <0800> NOP
-[0165]   <ef40> MFPC R7
-[0166]   <4f03> ADDIU R7 0003
-[0167]   <0800> NOP
-[0168]   <176d> B ff6d
-[0169]   <0800> NOP
-[016a]   <6ebf> LI R6 00bf
-[016b]   <36c0> SLL R6 R6 0000
-[016c]   <9ea0> LW R6 R5 0000
-[016d]   <6eff> LI R6 00ff
-[016e]   <edcc> AND R5 R6
-[016f]   <0800> NOP
-[0170]   <ef40> MFPC R7
-[0171]   <4f03> ADDIU R7 0003
-[0172]   <0800> NOP
-[0173]   <1762> B ff62
-[0174]   <0800> NOP
-[0175]   <6ebf> LI R6 00bf
-[0176]   <36c0> SLL R6 R6 0000
-[0177]   <9e40> LW R6 R2 0000
-[0178]   <6eff> LI R6 00ff
-[0179]   <eacc> AND R2 R6
-[017a]   <0800> NOP
-[017b]   <3240> SLL R2 R2 0000
-[017c]   <eaad> OR R2 R5
-[017d]   <d940> SW R1 R2 0000
-[017e]   <0800> NOP
-[017f]   <17c9> B ffc9
-[0180]   <0800> NOP
+    ;¶ÁÈ¡Êý¾Ý¸ßÎ»µ½R2
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R2 0x0000
+    LI R6 0x00FF
+    AND R2 R6
+    NOP 
+    ;R2±£´æÊý¾Ý
+    SLL R2 R2 0x0000
+    OR R2 R5
+            
+    SW R1 R2 0x0000 
+    NOP
+    
+    B ASM
+    NOP
+    
 GOTOBEGIN:
-[0181]   <0800> NOP
-[0182]   <171e> B ff1e
-[0183]   <0800> NOP
-
-;反汇编：将需要反汇编的地址处的值发给终端处理 
+    NOP
+    B BEGIN
+    NOP
+    
+    
+    
+    
+;·´»ã±à£º½«ÐèÒª·´»ã±àµÄµØÖ·´¦µÄÖµ·¢¸øÖÕ¶Ë´¦Àí   
 UASM:
-;读取地址低位到r5
-[0184]   <ef40> MFPC R7
-[0185]   <4f03> ADDIU R7 0003
-[0186]   <0800> NOP
-[0187]   <174e> B ff4e
-[0188]   <0800> NOP
-[0189]   <6ebf> LI R6 00bf
-[018a]   <36c0> SLL R6 R6 0000
-[018b]   <9ea0> LW R6 R5 0000
-[018c]   <6eff> LI R6 00ff
-[018d]   <edcc> AND R5 R6
-[018e]   <0800> NOP
-[018f]   <ef40> MFPC R7
-[0190]   <4f03> ADDIU R7 0003
-[0191]   <0800> NOP
-[0192]   <1743> B ff43
-[0193]   <0800> NOP
-[0194]   <6ebf> LI R6 00bf
-[0195]   <36c0> SLL R6 R6 0000
-[0196]   <9e20> LW R6 R1 0000
-[0197]   <6eff> LI R6 00ff
-[0198]   <e9cc> AND R1 R6
-[0199]   <0800> NOP
-[019a]   <3120> SLL R1 R1 0000
-[019b]   <e9ad> OR R1 R5
-[019c]   <ef40> MFPC R7
-[019d]   <4f03> ADDIU R7 0003
-[019e]   <0800> NOP
-[019f]   <1736> B ff36
-[01a0]   <0800> NOP
-[01a1]   <6ebf> LI R6 00bf
-[01a2]   <36c0> SLL R6 R6 0000
-[01a3]   <9ea0> LW R6 R5 0000
-[01a4]   <6eff> LI R6 00ff
-[01a5]   <edcc> AND R5 R6
-[01a6]   <0800> NOP
-[01a7]   <ef40> MFPC R7
-[01a8]   <4f03> ADDIU R7 0003
-[01a9]   <0800> NOP
-[01aa]   <172b> B ff2b
-[01ab]   <0800> NOP
-[01ac]   <6ebf> LI R6 00bf
-[01ad]   <36c0> SLL R6 R6 0000
-[01ae]   <9e40> LW R6 R2 0000
-[01af]   <6eff> LI R6 00ff
-[01b0]   <eacc> AND R2 R6
-[01b1]   <0800> NOP
-[01b2]   <3240> SLL R2 R2 0000
-[01b3]   <eaad> OR R2 R5
+;¶ÁÈ¡µØÖ·µÍÎ»µ½r5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    ;¶ÁÈ¡µØÖ·¸ßÎ»µ½r1
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R1 0x0000
+    LI R6 0x00FF
+    AND R1 R6
+    NOP 
+    
+    
+    
+    ;R1´æ´¢µØÖ·
+    SLL R1 R1 0x0000
+    OR R1 R5
+    
+    ;¶ÁÈ¡ÏÔÊ¾´ÎÊýµÍÎ»µ½R5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    ;¶ÁÈ¡ÏÔÊ¾´ÎÊý¸ßÎ»µ½R2
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R2 0x0000
+    LI R6 0x00FF
+    AND R2 R6
+    NOP 
+    ;R2±£´æÄÚ´æ¸öÊý
+    SLL R2 R2 0x0000
+    OR R2 R5
 
-                ;循环发出           
-UASMLOOP:                             
+    
+        ;Ñ­»··¢³ö   
+    
+UASMLOOP:       
+    
+    LW R1 R3 0x0000    ;R3ÎªÄÚ´æÊý¾Ý    
 
-[01b4]   <9960> LW R1 R3 0000
-[01b5]   <ef40> MFPC R7
-[01b6]   <4f03> ADDIU R7 0003
-[01b7]   <0800> NOP
-[01b8]   <1712> B ff12
-[01b9]   <0800> NOP
-[01ba]   <6ebf> LI R6 00bf
-[01bb]   <36c0> SLL R6 R6 0000
-[01bc]   <de60> SW R6 R3 0000
-[01bd]   <3363> SRA R3 R3 0000
-[01be]   <ef40> MFPC R7
-[01bf]   <4f03> ADDIU R7 0003
-[01c0]   <0800> NOP
-[01c1]   <1709> B ff09
-[01c2]   <0800> NOP
-[01c3]   <6ebf> LI R6 00bf
-[01c4]   <36c0> SLL R6 R6 0000
-[01c5]   <de60> SW R6 R3 0000
-[01c6]   <4901> ADDIU R1 0001
-[01c7]   <4aff> ADDIU R2 ffff
-[01c8]   <0800> NOP
-[01c9]   <2aea> BNEZ R2 ffea
-[01ca]   <0800> NOP
-[01cb]   <16d5> B fed5
-[01cc]   <0800> NOP
+    ;·¢ËÍµÍ°ËÎ»
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R3 0x0000 
+    ;·¢ËÍ¸ß°ËÎ»
 
-;连续执行
+    SRA R3 R3 0x0000
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R3 0x0000 
+    
+    ADDIU R1 0x0001   ;R1=µØÖ·¼Ó¼Ó¼Ó
+    ADDIU R2 0xFFFF
+    NOP
+    BNEZ R2 UASMLOOP
+    NOP 
+
+    B BEGIN
+    NOP         
+    
+;Á¬ÐøÖ´ÐÐ
 COMPILE:
-
-;读取地址低位到R5
-[01cd]   <ef40> MFPC R7
-[01ce]   <4f03> ADDIU R7 0003
-[01cf]   <0800> NOP
-[01d0]   <1705> B ff05
-[01d1]   <0800> NOP
-[01d2]   <6ebf> LI R6 00bf
-[01d3]   <36c0> SLL R6 R6 0000
-[01d4]   <9ea0> LW R6 R5 0000
-[01d5]   <6eff> LI R6 00ff
-[01d6]   <edcc> AND R5 R6
-[01d7]   <0800> NOP
-;读取内存高位到R2
-[01d8]   <ef40> MFPC R7
-[01d9]   <4f03> ADDIU R7 0003
-[01da]   <0800> NOP
-[01db]   <16fa> B fefa
-[01dc]   <0800> NOP
-[01dd]   <6ebf> LI R6 00bf
-[01de]   <36c0> SLL R6 R6 0000
-[01df]   <9e40> LW R6 R2 0000
-[01e0]   <6eff> LI R6 00ff
-[01e1]   <eacc> AND R2 R6
-[01e2]   <0800> NOP
-;R2保存内存地址  传给r6
-[01e3]   <3240> SLL R2 R2 0000
-[01e4]   <eaad> OR R2 R5
-[01e5]   <42c0> ADDIU3 R2 R6 0000
-
-[01e6]   <6fbf> LI R7 00bf
-[01e7]   <37e0> SLL R7 R7 0000
-[01e8]   <4f10> ADDIU R7 0010
-
-[01e9]   <9fa5> LW R7 R5 0005
-[01ea]   <63ff> ADDSP ffff
-[01eb]   <d500> SW-SP R5 0000
-
-;中断保存在R5中
-[01ec]   <f500> MFIH R5
-[01ed]   <6980> LI R1 0080
-[01ee]   <3120> SLL R1 R1 0000
-[01ef]   <ed2d> OR R5 R1
-
-;恢复现场
-[01f0]   <9f00> LW R7 R0 0000
-[01f1]   <9f21> LW R7 R1 0001
-[01f2]   <9f42> LW R7 R2 0002
-[01f3]   <9f63> LW R7 R3 0003
-[01f4]   <9f84> LW R7 R4 0004
-
-
-[01f5]   <ef40> MFPC R7
-[01f6]   <4f04> ADDIU R7 0004
-[01f7]   <f501> MTIH R5    ;IH高位赋1
-[01f8]   <ee00> JR R6
-[01f9]   <9500> LW-SP R5 0000    ;R5恢复现场
-
-;用户程序执行完毕，返回kernel，保存现场
-[01fa]   <0800> NOP
-[01fb]   <0800> NOP
-[01fc]   <6301> ADDSP 0001
-[01fd]   <6fbf> LI R7 00bf
-[01fe]   <37e0> SLL R7 R7 0000
-[01ff]   <4f10> ADDIU R7 0010
-
-[0200]   <df00> SW R7 R0 0000
-[0201]   <df21> SW R7 R1 0001
-[0202]   <df42> SW R7 R2 0002
-[0203]   <df63> SW R7 R3 0003
-[0204]   <df84> SW R7 R4 0004
-[0205]   <dfa5> SW R7 R5 0005
-[0206]   <f000> MFIH R0
-[0207]   <697f> LI R1 007f
-[0208]   <3120> SLL R1 R1 0000
-[0209]   <6aff> LI R2 00ff
-[020a]   <e94d> OR R1 R2
-[020b]   <e82c> AND R0 R1
-[020c]   <f001> MTIH R0
-[020d]   <6907> LI R1 0007
-[020e]   <ef40> MFPC R7
-[020f]   <4f03> ADDIU R7 0003
-[0210]   <0800> NOP
-[0211]   <16b9> B feb9
-[0212]   <0800> NOP
-[0213]   <6ebf> LI R6 00bf
-[0214]   <36c0> SLL R6 R6 0000
-[0215]   <de20> SW R6 R1 0000
-[0216]   <168a> B fe8a
-[0217]   <0800> NOP
+    ;¶ÁÈ¡µØÖ·µÍÎ»µ½R5
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R5 0x0000
+    LI R6 0x00FF
+    AND R5 R6
+    NOP 
+    ;¶ÁÈ¡ÄÚ´æ¸ßÎ»µ½R2
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP 
+    B TESTR 
+    NOP
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 
+    LW R6 R2 0x0000
+    LI R6 0x00FF
+    AND R2 R6
+    NOP 
+    ;R2±£´æÄÚ´æµØÖ·  ´«¸ør6
+    SLL R2 R2 0x0000
+    OR R2 R5
+    ADDIU3 R2 R6 0x0000
+    
+    
+    LI R7 0x00BF
+    SLL R7 R7 0x0000
+    ADDIU R7 0x0010
+    
+    LW R7 R5 0x0005
+    ADDSP 0xFFFF
+    SW_SP R5 0x0000
+    
+    
+    ;ÖÐ¶Ï±£´æÔÚR5ÖÐ
+    MFIH R5
+    LI R1 0x0080
+    SLL R1 R1 0x000
+    OR R5 R1
+    
+    
+    
+    ;»Ö¸´ÏÖ³¡
+    LW R7 R0 0x0000
+    LW R7 R1 0x0001
+    LW R7 R2 0x0002
+    LW R7 R3 0x0003
+    LW R7 R4 0x0004
+    
+    
+    
+    MFPC R7
+    ADDIU R7 0x0004
+    MTIH R5    ;IH¸ßÎ»¸³1   
+    JR R6
+    LW_SP R5 0x0000  ;R5»Ö¸´ÏÖ³¡
+    
+    ;ÓÃ»§³ÌÐòÖ´ÐÐÍê±Ï£¬·µ»Økernel£¬±£´æÏÖ³¡
+    NOP
+    NOP
+    ADDSP 0x0001
+    LI R7 0x00BF
+    SLL R7 R7 0x0000
+    ADDIU R7 0x0010
+    
+    SW R7 R0 0x0000
+    SW R7 R1 0x0001
+    SW R7 R2 0x0002
+    SW R7 R3 0x0003
+    SW R7 R4 0x0004
+    SW R7 R5 0x0005
+    
+    ;IH¸ßÎ»¸³0
+    MFIH R0
+    LI R1 0x007F
+    SLL R1 R1 0x0000
+    LI R2 0x00FF
+    OR R1 R2    
+    AND R0 R1
+    MTIH R0
+    
+    ;¸øÖÕ¶Ë·¢ËÍ½áÊøÓÃ»§³ÌÐòÌáÊ¾
+    LI R1 0x0007
+    MFPC R7
+    ADDIU R7 0x0003 
+    NOP
+    B TESTW 
+    NOP 
+    LI R6 0x00BF 
+    SLL R6 R6 0x0000 ;R6=0xBF00 
+    SW R6 R1 0x0000     
+    B BEGIN
+    NOP 
+    
