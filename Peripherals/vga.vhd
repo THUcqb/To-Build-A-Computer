@@ -56,7 +56,7 @@ architecture beh of VGA is
     type t_dim0_vector is array(natural range <>) of t_dim0;
     subtype t_dim1 is t_dim0_vector(0 to 79);
     type t_dim1_vector is array(natural range <>) of t_dim1;
-    subtype t_dim2 is t_dim1_vector(0 to 3);
+    subtype t_dim2 is t_dim1_vector(0 to 4);
     signal video_memory: t_dim2 := (others => (others => (others => '0')));
 
 
@@ -72,8 +72,7 @@ architecture beh of VGA is
     SIGNAL n_sync : STD_LOGIC;
     shared variable target_row, target_col : integer := 0;
 
-    SIGNAL cursor_twinkle: std_logic := '0';
-    shared variable cursor_twinkle_cnt: integer := 0;
+    shared variable edit_mode : boolean := true;
 
 begin
 
@@ -119,42 +118,123 @@ begin
         pixel => pixel
     );
 
-    r <= (others => pixel);
-    g <= (others => pixel);
-    b <= (others => pixel);
-
+    r <= "000" when row / 16 = 2 else
+         "100" when pixel = '1' else
+         "001" when row / 16 = target_row else
+         "000";
+    g <= "000" when row / 16 = 1 else
+         "100" when pixel = '1' else
+         "001" when row / 16 = target_row else
+         "000";
+    b <= pixel & "00";
 
     process (rst, clk)
-        -- variable target_row, target_col : integer;
     begin
         if rst = '0' then
+            target_row := 2;
+            target_col := 10;
+            edit_mode := true;
             video_memory <= (others => (others => (others => '0')));
+            -- Show
+            video_memory(1)(1) <= std_logic_vector(to_unsigned(character'pos('T'), 7));
+            video_memory(1)(2) <= std_logic_vector(to_unsigned(character'pos('H'), 7));
+            video_memory(1)(3) <= std_logic_vector(to_unsigned(character'pos('C'), 7));
+            video_memory(1)(4) <= std_logic_vector(to_unsigned(character'pos('O'), 7));
+            video_memory(1)(5) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(6) <= std_logic_vector(to_unsigned(character'pos('M'), 7));
+            video_memory(1)(7) <= std_logic_vector(to_unsigned(character'pos('I'), 7));
+            video_memory(1)(8) <= std_logic_vector(to_unsigned(character'pos('P'), 7));
+            video_memory(1)(9) <= std_logic_vector(to_unsigned(character'pos('S'), 7));
+            video_memory(1)(10) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(11) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(12) <= std_logic_vector(to_unsigned(character'pos('M'), 7));
+            video_memory(1)(13) <= std_logic_vector(to_unsigned(character'pos('a'), 7));
+            video_memory(1)(14) <= std_logic_vector(to_unsigned(character'pos('d'), 7));
+            video_memory(1)(15) <= std_logic_vector(to_unsigned(character'pos('e'), 7));
+            video_memory(1)(16) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(17) <= std_logic_vector(to_unsigned(character'pos('b'), 7));
+            video_memory(1)(18) <= std_logic_vector(to_unsigned(character'pos('y'), 7));
+            video_memory(1)(19) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(20) <= std_logic_vector(to_unsigned(character'pos('S'), 7));
+            video_memory(1)(21) <= std_logic_vector(to_unsigned(character'pos('t'), 7));
+            video_memory(1)(22) <= std_logic_vector(to_unsigned(character'pos('a'), 7));
+            video_memory(1)(23) <= std_logic_vector(to_unsigned(character'pos('r'), 7));
+            video_memory(1)(24) <= std_logic_vector(to_unsigned(character'pos('c'), 7));
+            video_memory(1)(25) <= std_logic_vector(to_unsigned(character'pos('u'), 7));
+            video_memory(1)(26) <= std_logic_vector(to_unsigned(character'pos('t'), 7));
+            video_memory(1)(27) <= std_logic_vector(to_unsigned(character'pos('t'), 7));
+            video_memory(1)(28) <= std_logic_vector(to_unsigned(character'pos('e'), 7));
+            video_memory(1)(29) <= std_logic_vector(to_unsigned(character'pos('r'), 7));
+            video_memory(1)(30) <= std_logic_vector(to_unsigned(character'pos(','), 7));
+            video_memory(1)(31) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(32) <= std_logic_vector(to_unsigned(character'pos('W'), 7));
+            video_memory(1)(33) <= std_logic_vector(to_unsigned(character'pos('i'), 7));
+            video_memory(1)(34) <= std_logic_vector(to_unsigned(character'pos('n'), 7));
+            video_memory(1)(35) <= std_logic_vector(to_unsigned(character'pos('d'), 7));
+            video_memory(1)(36) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(37) <= std_logic_vector(to_unsigned(character'pos('a'), 7));
+            video_memory(1)(38) <= std_logic_vector(to_unsigned(character'pos('n'), 7));
+            video_memory(1)(39) <= std_logic_vector(to_unsigned(character'pos('d'), 7));
+            video_memory(1)(40) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(1)(41) <= std_logic_vector(to_unsigned(character'pos('T'), 7));
+            video_memory(1)(42) <= std_logic_vector(to_unsigned(character'pos('H'), 7));
+            video_memory(1)(43) <= std_logic_vector(to_unsigned(character'pos('U'), 7));
+            video_memory(1)(44) <= std_logic_vector(to_unsigned(character'pos('c'), 7));
+            video_memory(1)(45) <= std_logic_vector(to_unsigned(character'pos('q'), 7));
+            video_memory(1)(46) <= std_logic_vector(to_unsigned(character'pos('b'), 7));
+            video_memory(1)(47) <= std_logic_vector(to_unsigned(character'pos('.'), 7));
+
+            video_memory(2)(1) <= std_logic_vector(to_unsigned(character'pos('r'), 7));
+            video_memory(2)(2) <= std_logic_vector(to_unsigned(character'pos('o'), 7));
+            video_memory(2)(3) <= std_logic_vector(to_unsigned(character'pos('o'), 7));
+            video_memory(2)(4) <= std_logic_vector(to_unsigned(character'pos('t'), 7));
+            video_memory(2)(5) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(2)(6) <= std_logic_vector(to_unsigned(character'pos('/'), 7));
+            video_memory(2)(7) <= std_logic_vector(to_unsigned(character'pos(' '), 7));
+            video_memory(2)(8) <= std_logic_vector(to_unsigned(character'pos('$'), 7));
         else
-            if rising_edge(clk) then
-                cursor_twinkle_cnt := cursor_twinkle_cnt + 1;
-                if cursor_twinkle_cnt = 20_000_000 then
-                    cursor_twinkle <= not cursor_twinkle;
-                    cursor_twinkle_cnt := 0;
-                end if;
-            end if;
-
             if falling_edge(clk) and control_mem.mem_write = '1' then
-                if write_data(6 downto 0) = "0001101" then -- Enter
-                    target_row := target_row + 1;
-                    target_col := 0;
+                if edit_mode = false then
+                    case write_data(6 downto 0) is
+                        when "1101001" =>
+                            edit_mode := true;
+                        when "0001101" => -- Enter
+                            target_row := target_row + 1;
+                        when "0001000" => -- Backspace
+                            target_col := target_col - 1;
+                        when "1101000" => -- h
+                            target_col := target_col - 1;
+                        when "1101100" => -- l
+                            target_col := target_col + 1;
+                        when "1101010" => -- j
+                            target_row := target_row + 1;
+                        when "1101011" => -- k
+                            target_row := target_row - 1;
+                        when others =>
+                    end case;
                 else
-                    target_col := target_col + 1;
-                    if target_col = 80 then
-                        target_row := target_row + 1;
-                        target_col := 0;
-                    end if;
-                    -- target_row := to_integer(Unsigned(address(15 downto 14)));
-                    -- target_col := to_integer(Unsigned(address(13 downto 7)));
-                    video_memory(target_row)
-                                (target_col)
-                                <= write_data(6 downto 0);
+                    case write_data(6 downto 0) is
+                        when "0001101" => -- Enter
+                            target_row := target_row + 1;
+                            target_col := 0;
+                        when "0001000" => -- Backspace
+                            video_memory(target_row)
+                                        (target_col)
+                                            <= (others => '0');
+                            target_col := target_col - 1;
+                        when "0011011" => -- Escape
+                            edit_mode := false;
+                        when others =>
+                            video_memory(target_row)
+                                        (target_col)
+                                        <= write_data(6 downto 0);
+                            target_col := target_col + 1;
+                            if target_col = 80 then
+                                target_row := target_row + 1;
+                                target_col := 0;
+                            end if;
+                    end case;
                 end if;
-
             end if;
         end if;
     end process;
@@ -165,17 +245,17 @@ begin
                             ((row / FONT_HEIGHT) * FONT_HEIGHT));
 
         if 0 <= row and row < 4 * FONT_HEIGHT and 0 <= column and column < 80 * FONT_WIDTH then
-        displayAscii <= video_memory(row / FONT_HEIGHT)
-                                    (column / FONT_WIDTH);
+            displayAscii <= video_memory(row / FONT_HEIGHT)
+                                        (column / FONT_WIDTH);
         else
             displayAscii <= "0000000";
         end if;
 
         if column / FONT_WIDTH = target_col and row / FONT_HEIGHT = target_row then
-            if cursor_twinkle = '1' then
-                displayAscii <= "0000000";
-            else
+            if edit_mode = false then
                 displayAscii <= "0001000";
+            else
+                displayAscii <= "1111100";
             end if;
         end if;
     end process;

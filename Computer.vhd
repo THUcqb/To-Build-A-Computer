@@ -10,7 +10,7 @@ entity Computer is
     port
     (
         -- clock
-        clk_11, clk_0, clk_manual, rst_button : in std_logic;
+        clk_11, clk_0, rst_button : in std_logic;
 
         -- Instruction memory - RAM 2
         instruction_memory_data: inout std_logic_vector(15 downto 0);
@@ -524,16 +524,4 @@ begin
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);
 
-    --process (clk_0)
-    --begin
-    --    if rising_edge(clk_0) then
-    --        n := n + 1;
-    --        if n = ratio then
-    --            clk <= not clk;
-    --            n := 0;
-    --        end if;
-    --    end if;
-    --end process;
-
-    -- clk <= clk_manual;
 end Computer_beh;
