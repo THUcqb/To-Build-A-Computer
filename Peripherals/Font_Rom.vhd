@@ -24,7 +24,7 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 -- note this line.The package is compiled to this directory by default.
--- so don't forget to include this directory. 
+-- so don't forget to include this directory.
 library work;
 -- this line also is must.This includes the particular package into your program.
 use work.commonPak.all;
@@ -38,9 +38,9 @@ entity Font_Rom is
 end Font_Rom;
 
 architecture Behavioral of Font_Rom is
-   
+
     -- 2^7 charactors
-    -- + 2^4 row per charactor 
+    -- + 2^4 row per charactor
     -- therefore the total array size is 2^11 = 2048
 	type rom_type is array (0 to 2**11-1) of std_logic_vector(FONT_WIDTH-1 downto 0);
 
@@ -189,10 +189,10 @@ architecture Behavioral of Font_Rom is
 		"11111111", -- 3 ********
 		"11111111", -- 4 ********
 		"11111111", -- 5 ********
-		"11100111", -- 6 ***  ***
-		"11000011", -- 7 **    **
-		"11000011", -- 8 **    **
-		"11100111", -- 9 ***  ***
+		"11111111", -- 6 ***  ***
+		"11111111", -- 7 **    **
+		"11111111", -- 8 **    **
+		"11111111", -- 9 ***  ***
 		"11111111", -- a ********
 		"11111111", -- b ********
 		"11111111", -- c ********
@@ -2156,22 +2156,22 @@ architecture Behavioral of Font_Rom is
 		"00000000", -- e
 		"00000000", -- f
 		-- code x7c
-		"00000000", -- 0
-		"00000000", -- 1
-		"00011000", -- 2    **
-		"00011000", -- 3    **
-		"00011000", -- 4    **
-		"00011000", -- 5    **
-		"00000000", -- 6
-		"00011000", -- 7    **
-		"00011000", -- 8    **
-		"00011000", -- 9    **
-		"00011000", -- a    **
-		"00011000", -- b    **
-		"00000000", -- c
-		"00000000", -- d
-		"00000000", -- e
-		"00000000", -- f
+		"11100000", -- 0
+		"11100000", -- 1
+		"11100000", -- 2    **
+		"11100000", -- 3    **
+		"11100000", -- 4    **
+		"11100000", -- 5    **
+		"11100000", -- 6    **
+		"11100000", -- 7    **
+		"11100000", -- 8    **
+		"11100000", -- 9    **
+		"11100000", -- a    **
+		"11100000", -- b    **
+		"11100000", -- c
+		"11100000", -- d
+		"11100000", -- e
+		"11100000", -- f
 		-- code x7d
 		"00000000", -- 0
 		"00000000", -- 1
@@ -2233,5 +2233,5 @@ begin
 			fontRow <= ROM(addr);
 		end if;
 	end process;
-	
+
 end Behavioral;
