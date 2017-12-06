@@ -242,7 +242,7 @@ architecture Computer_beh of Computer is
     end component HazardDetection;
 
     signal clk: std_logic := '1';
-    shared variable n: integer := 0;
+    signal clk_50M: std_logic;
 
     -- IF's outputs
     signal if_pc, if_instruction: std_logic_vector(15 downto 0);
@@ -475,7 +475,7 @@ begin
     display: entity work.vga
         port map
         (
-            clk => clk_0,
+            clk => clk_50M,
             rst => rst_button,
 
             h_sync => h_sync,
@@ -486,21 +486,34 @@ begin
 
             register_file => register_file,
 
-            flash_pin => flash_pin_signal
+            flash_pin => flash_pin_signal,
+
+            instruction => if_instruction,
+            pc => id_pc
+        );
+
+    clock: entity work.Clock
+        port map
+        (
+            CLKIN_IN => clk_0,
+            RST_IN => '0',
+            CLKFX_OUT => clk,
+            CLKIN_IBUFG_OUT => open,
+            CLK0_OUT => clk_50M
         );
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);
 
-    process (clk_0)
-    begin
-        if rising_edge(clk_0) then
-            n := n + 1;
-            if n = ratio then
-                clk <= not clk;
-                n := 0;
-            end if;
-        end if;
-    end process;
+    --process (clk_0)
+    --begin
+    --    if rising_edge(clk_0) then
+    --        n := n + 1;
+    --        if n = ratio then
+    --            clk <= not clk;
+    --            n := 0;
+    --        end if;
+    --    end if;
+    --end process;
 
     -- clk <= clk_manual;
 end Computer_beh;
