@@ -24,7 +24,7 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 -- note this line.The package is compiled to this directory by default.
--- so don't forget to include this directory. 
+-- so don't forget to include this directory.
 library work;
 -- this line also is must.This includes the particular package into your program.
 use work.commonPak.all;
@@ -38,9 +38,9 @@ entity Font_Rom is
 end Font_Rom;
 
 architecture Behavioral of Font_Rom is
-   
+
     -- 2^7 charactors
-    -- + 2^4 row per charactor 
+    -- + 2^4 row per charactor
     -- therefore the total array size is 2^11 = 2048
 	type rom_type is array (0 to 2**11-1) of std_logic_vector(FONT_WIDTH-1 downto 0);
 
@@ -189,10 +189,10 @@ architecture Behavioral of Font_Rom is
 		"11111111", -- 3 ********
 		"11111111", -- 4 ********
 		"11111111", -- 5 ********
-		"11100111", -- 6 ***  ***
-		"11000011", -- 7 **    **
-		"11000011", -- 8 **    **
-		"11100111", -- 9 ***  ***
+		"11111111", -- 6 ***  ***
+		"11111111", -- 7 **    **
+		"11111111", -- 8 **    **
+		"11111111", -- 9 ***  ***
 		"11111111", -- a ********
 		"11111111", -- b ********
 		"11111111", -- c ********
@@ -2233,5 +2233,5 @@ begin
 			fontRow <= ROM(addr);
 		end if;
 	end process;
-	
+
 end Behavioral;

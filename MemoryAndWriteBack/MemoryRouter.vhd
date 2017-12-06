@@ -13,7 +13,7 @@ use work.utils.all;
 entity MemoryRouter is
     port(
     -- clock
-        clk, rst: in std_logic;
+        clk, clk_50, rst: in std_logic;
 
     -- IN
         -- Data
@@ -37,7 +37,12 @@ entity MemoryRouter is
         instruction_memory_control: out type_control_mem;
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
-        serial1_pin_out: out type_serial_pin_out
+        serial1_pin_out: out type_serial_pin_out;
+        -- PS2
+        ps2_clk, ps2_data: in std_logic;
+        h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
+        -- VGA
+        r, g, b : out STD_LOGIC_VECTOR(2 downto 0)
     );
 
 end entity MemoryRouter;
@@ -71,8 +76,10 @@ architecture beh of MemoryRouter is
         );
     end component Serial;
 
-    signal data_memory_control, serial1_control
+    signal data_memory_control, serial1_control, ps2_control, vga_control
            : type_control_mem;
+
+    signal ps2_data_out: std_logic_vector(15 downto 0);
 
 begin
 
@@ -85,15 +92,26 @@ begin
                                             else '1';
 
     data_memory_control <= control_mem when (address(15) = '1' and
-                        address /= x"BF00" and address /= x"BF01" ) else
-                                  type_control_mem_zero;
+                        address /= x"BF00" and address /= x"BF01" and -- Serial
+                        address /= x"BF02" and address /= x"BF03" and -- PS2
+                        address /= x"BF04" and address /= x"BF05"     -- VGA
+                        ) else type_control_mem_zero;
 
     serial1_control <= control_mem when
                             (address = x"BF00" or address = x"BF01") else
                            type_control_mem_zero;
 
+    ps2_control <= control_mem when
+                    (address = x"BF02" or address = x"BF03") else
+                   type_control_mem_zero;
+
+    vga_control <= control_mem when
+                    (address = x"BF04" or address = x"BF05") else
+                   type_control_mem_zero;
+
     --  Select the read out data with address
-    read_data <= ram1_data when address(15) = '1' else
+    read_data <= ps2_data_out when address = x"BF02" or address = x"BF03" else
+                 ram1_data when address(15) = '1' else
                  ram2_data;
 
     control_address <= '1' when address(15) = '0' and
@@ -125,4 +143,31 @@ begin
             data => ram1_data
         );
 
+    ps2: entity work.Keyboard
+        port map(
+            clk => clk,
+            clk_50 => clk_50,
+            rst => rst,
+            control_mem => ps2_control,
+            address => address,
+            ps2_clk => ps2_clk,
+            ps2_data => ps2_data,
+            data => ps2_data_out
+        );
+
+    vga: entity work.vga
+        port map(
+        -- VGA
+            clk => clk,
+            clk_50 => clk_50,
+            rst => rst,
+            control_mem => vga_control,
+            address => address,
+            write_data => write_data,
+            h_sync => h_sync,
+            v_sync => v_sync,
+            r => r,
+            g => g,
+            b => b
+        );
 end architecture beh;

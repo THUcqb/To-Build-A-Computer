@@ -28,13 +28,9 @@ library work;
 use work.commonPak.all;
 
 entity Pixel_On_Text is
-	generic(
-	   -- needed for init displayText, the default value 11 is just a random number
-       textLength: integer := 20
-	);
 	port (
 		clk: in std_logic;
-		displayText: in string (1 to textLength) := (others => NUL);
+		displayAscii: in std_logic_vector(6 downto 0);
 		-- top left corner of the text
 		position: in point_2d := (0, 0);
 		-- current pixel postion
@@ -61,7 +57,7 @@ begin
     -- (horzCoord - position.x): x positionin the top left of the whole text
     charPosition <= (horzCoord - position.x)/FONT_WIDTH + 1;
     bitPosition <= (horzCoord - position.x) mod FONT_WIDTH;
-    charCode <= character'pos(displayText(charPosition));
+    charCode <= to_integer(Unsigned(displayAscii));
     -- charCode*16: first row of the char
     fontAddress <= charCode*16+(vertCoord - position.y);
 
@@ -84,7 +80,7 @@ begin
             inYRange := false;
             pixel <= '0';
             -- If current pixel is in the horizontal range of text
-            if horzCoord >= position.x and horzCoord < position.x + (FONT_WIDTH * textlength) then
+            if horzCoord >= position.x and horzCoord < position.x + FONT_WIDTH then
                 inXRange := true;
             end if;
 

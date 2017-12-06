@@ -5,10 +5,10 @@ library UNISIM;
 use UNISIM.Vcomponents.ALL;
 
 entity Clock is
-   port ( CLKIN_IN        : in    std_logic; 
-          RST_IN          : in    std_logic; 
-          CLKFX_OUT       : out   std_logic; 
-          CLKIN_IBUFG_OUT : out   std_logic; 
+   port ( CLKIN_IN        : in    std_logic;
+          RST_IN          : in    std_logic;
+          CLKFX_OUT       : out   std_logic;
+          CLKIN_IBUFG_OUT : out   std_logic;
           CLK0_OUT        : out   std_logic);
 end Clock;
 
@@ -25,20 +25,20 @@ begin
    CLKFX_BUFG_INST : BUFG
       port map (I=>CLKFX_BUF,
                 O=>CLKFX_OUT);
-   
+
    CLKIN_IBUFG_INST : IBUFG
       port map (I=>CLKIN_IN,
                 O=>CLKIN_IBUFG);
-   
+
    CLK0_BUFG_INST : BUFG
       port map (I=>CLK0_BUF,
                 O=>CLKFB_IN);
-   
+
    DCM_SP_INST : DCM_SP
    generic map( CLK_FEEDBACK => "1X",
             CLKDV_DIVIDE => 2.0,
-            CLKFX_DIVIDE => 20,
-            CLKFX_MULTIPLY => 11,
+            CLKFX_DIVIDE => 4,
+            CLKFX_MULTIPLY => 3,
             CLKIN_DIVIDE_BY_2 => FALSE,
             CLKIN_PERIOD => 20.000,
             CLKOUT_PHASE_SHIFT => "NONE",
@@ -68,5 +68,5 @@ begin
                 LOCKED=>open,
                 PSDONE=>open,
                 STATUS=>open);
-   
+
 end BEHAVIORAL;

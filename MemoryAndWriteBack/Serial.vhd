@@ -32,7 +32,7 @@ begin
                     else '1';
 
     pin_out.rdn <= '0' when address = x"BF00" and
-                            control_mem.mem_read = '1' and clk = '0'
+                            control_mem.mem_read = '1'
                     else '1';
 
     --  Data memory bus

@@ -169,7 +169,7 @@ architecture Computer_beh of Computer is
     component MemoryAndWriteBack is
         port(
         -- clock
-            clk: in std_logic;
+            clk, clk_50: in std_logic;
         -- reset
             rst: in std_logic;
 
@@ -201,6 +201,11 @@ architecture Computer_beh of Computer is
             -- Serial port
             serial1_pin_in: in type_serial_pin_in;
             serial1_pin_out: out type_serial_pin_out;
+            -- PS2
+            ps2_clk, ps2_data: in std_logic;
+            h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
+    	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0);
+
             test: out std_logic_vector(15 downto 0)
         );
     end component MemoryAndWriteBack;
@@ -416,6 +421,7 @@ begin
         port map
         (
             clk => clk,
+            clk_50 => clk_50M,
             rst => rst,
             alu_result => ex_alu_result,
             write_data => ex_write_data,
@@ -437,6 +443,15 @@ begin
 
             serial1_pin_in => serial1_pin_in,
             serial1_pin_out => serial1_pin_out,
+            -- PS2
+            ps2_clk => ps2_clk,
+            ps2_data => ps2_data,
+            -- VGA
+            h_sync => h_sync,
+            v_sync => v_sync,
+            r => r,
+            g => g,
+            b => b,
 
             test => mem_test
         );
@@ -475,28 +490,28 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    display: entity work.vga
-        port map
-        (
-            clk => clk_50M,
-            rst => rst_button,
-
-            h_sync => h_sync,
-            v_sync => v_sync,
-            r => r,
-            g => g,
-            b => b,
-
-            register_file => register_file,
-
-            flash_pin => flash_pin_signal,
-
-            ps2_clk => ps2_clk,
-            ps2_data => ps2_data,
-            instruction => if_instruction,
-            pc => id_pc
-        );
-
+    -- display: entity work.vga
+    --     port map
+    --     (
+    --         clk => clk_50M,
+    --         rst => rst_button,
+    --
+    --         h_sync => h_sync,
+    --         v_sync => v_sync,
+    --         r => r,
+    --         g => g,
+    --         b => b,
+    --
+    --         register_file => register_file,
+    --
+    --         flash_pin => flash_pin_signal,
+    --
+    --         ps2_clk => ps2_clk,
+    --         ps2_data => ps2_data,
+    --         instruction => if_instruction,
+    --         pc => id_pc
+    --     );
+    --
     clock: entity work.Clock
         port map
         (

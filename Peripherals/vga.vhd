@@ -6,33 +6,17 @@ use ieee.std_logic_textio.all;
 library std;
 use std.textio.all;
 
-
 use work.commonPak.all;
 use work.utils.all;
 
 entity VGA is
-    GENERIC(
-        textLength: INTEGER := 20;
-        textHeight: INTEGER := 16;
-        textSep: INTEGER := 8;
-        startRow: INTEGER := 32;
-        startCol: INTEGER := 32;
-        indent: INTEGER := 8
-    );
     PORT (
-        clk, rst:  IN   STD_LOGIC;
+        clk, clk_50, rst: IN STD_LOGIC;
 
-        h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
-	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0);
-
-        register_file: in RegisterArray;
-
-        flash_pin: in type_flash_pin;
-
-        ps2_clk: in std_logic;
-        ps2_data: in std_logic;
-        instruction: in std_logic_vector(15 downto 0);
-        pc: in std_logic_vector(15 downto 0)
+        control_mem: in type_control_mem;
+        address, write_data: in std_logic_vector(15 downto 0);
+        h_sync, v_sync: OUT STD_LOGIC;  --horiztonal, vertical sync pulse
+	    r, g, b: out STD_LOGIC_VECTOR(2 downto 0)
 	);
 end VGA;
 
@@ -62,25 +46,34 @@ architecture beh of VGA is
             n_sync    :  OUT  STD_LOGIC); --sync-on-green output to DAC
     END component;
 
+    -- Refreshing coordinates
     SIGNAL column : INTEGER;
     SIGNAL row : INTEGER;
     SIGNAL pixel: STD_LOGIC;
 
-    shared VARIABLE displayText: STRING (1 to textLength) := (others => NUL);
-    shared VARIABLE top_left_corner: point_2d := (0, 0);
+    -- video memory register file
+    subtype t_dim0 is std_logic_vector(6 downto 0);
+    type t_dim0_vector is array(natural range <>) of t_dim0;
+    subtype t_dim1 is t_dim0_vector(0 to 79);
+    type t_dim1_vector is array(natural range <>) of t_dim1;
+    subtype t_dim2 is t_dim1_vector(0 to 3);
+    signal video_memory: t_dim2 := (others => (others => (others => '0')));
 
-    SIGNAL displayTextSig: STRING (1 to textLength) := (others => NUL);
-    SIGNAL top_left_corner_sig: point_2d := (0, 0);
+
+    -- Text range to display and top_left_corner for the text
+    signal displayAscii: std_logic_vector(6 downto 0);
+    signal top_left_corner: point_2d := (0, 0);
+
+    -- SIGNAL displayTextSig: STRING (1 to textLength) := (others => NUL);
+    -- SIGNAL top_left_corner_sig: point_2d := (0, 0);
     -- not in use
     SIGNAL disp_ena: STD_LOGIC;
     SIGNAL n_blank : STD_LOGIC;
     SIGNAL n_sync : STD_LOGIC;
+    shared variable target_row, target_col : integer := 0;
 
-    SIGNAL register_file_signal: RegisterArray;
-
-    -- keyboard
-    SIGNAL ascii_new: STD_LOGIC;
-    SIGNAL ascii_code: STD_LOGIC_VECTOR(6 downto 0);
+    SIGNAL cursor_twinkle: std_logic := '0';
+    shared variable cursor_twinkle_cnt: integer := 0;
 
 begin
 
@@ -98,7 +91,7 @@ begin
         v_pol => '0'  --vertical sync pulse polarity (1 = positive, 0 = negative)
     )
     port map(
-        pixel_clk=>clk,
+        pixel_clk=>clk_50,
         reset_n=>rst,
 
         column=>column,
@@ -113,76 +106,12 @@ begin
         n_sync=>n_sync
     );
 
-    r <= (others => pixel);
-    g <= (others => pixel);
-    b <= (others => pixel);
-
-    register_file_signal <= register_file;
-
-    select_text: process (clk)
-    begin
-        top_left_corner := (400, 300);
-        displayText := "ORZ";
-        if row < startRow + 1 * (textHeight + textSep) then
-            top_left_corner := (startCol, startRow);
-            displayText := "Registers";
-        elsif row < startRow + 2 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 1 * (textHeight + textSep));
-            displayText := "R0 = 0x" & to_hex_string(register_file_signal(0));
-        elsif row < startRow + 3 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 2 * (textHeight + textSep));
-            displayText := "R1 = 0x" & to_hex_string(register_file_signal(1));
-        elsif row < startRow + 4 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 3 * (textHeight + textSep));
-            displayText := "R2 = 0x" & to_hex_string(register_file_signal(2));
-        elsif row < startRow + 5 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 4 * (textHeight + textSep));
-            displayText := "R3 = 0x" & to_hex_string(register_file_signal(3));
-        elsif row < startRow + 6 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 5 * (textHeight + textSep));
-            displayText := "R4 = 0x" & to_hex_string(register_file_signal(4));
-        elsif row < startRow + 7 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 6 * (textHeight + textSep));
-            displayText := "R5 = 0x" & to_hex_string(register_file_signal(5));
-        elsif row < startRow + 8 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 7 * (textHeight + textSep));
-            displayText := "R6 = 0x" & to_hex_string(register_file_signal(6));
-        elsif row < startRow + 9 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 8 * (textHeight + textSep));
-            displayText := "R7 = 0x" & to_hex_string(register_file_signal(7));
-
-        elsif row < startRow + 11 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 10 * (textHeight + textSep));
-            displayText := "PC = 0x" & to_hex_string(pc);
-        elsif row < startRow + 12 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 11 * (textHeight + textSep));
-            displayText := "IN = 0x" & to_hex_string(instruction);
-
-        elsif row < startRow + 15 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 14 * (textHeight + textSep));
-            if flash_pin.flash_addr(16 downto 1) = x"4000" then
-                displayText := "Welcome";
-            else
-                displayText := "flash_addr = 0x" & to_hex_string(flash_pin.flash_addr(16 downto 1));
-            end if;
-        elsif row < startRow + 16 * (textHeight + textSep) then
-            top_left_corner := (1 * indent + startCol, startRow + 15 * (textHeight + textSep));
-            displayText := "Key = " & to_hex_string("000000000" & ascii_code);
-        end if;
-    end process;
-
-    displayTextSig <= displayText;
-    top_left_corner_sig <= top_left_corner;
-
     pixel_on: entity work.Pixel_On_Text
-    generic map (
-        textLength => textLength
-    )
-    port map(
-        clk => clk,
-        displayText => displayTextSig,
+    port map (
+        clk => clk_50,
+        displayAscii => displayAscii,
 
-        position => top_left_corner_sig,
+        position => top_left_corner,
 
         horzCoord => column,
         vertCoord => row,
@@ -190,13 +119,65 @@ begin
         pixel => pixel
     );
 
-    keyboard: entity work.ps2_keyboard_to_ascii
-    port map(
-        clk => clk,
-        ps2_clk => ps2_clk,
-        ps2_data => ps2_data,
-        ascii_new => ascii_new,
-        ascii_code => ascii_code
-    );
+    r <= (others => pixel);
+    g <= (others => pixel);
+    b <= (others => pixel);
+
+
+    process (rst, clk)
+        -- variable target_row, target_col : integer;
+    begin
+        if rst = '0' then
+            video_memory <= (others => (others => (others => '0')));
+        else
+            if rising_edge(clk) then
+                cursor_twinkle_cnt := cursor_twinkle_cnt + 1;
+                if cursor_twinkle_cnt = 20_000_000 then
+                    cursor_twinkle <= not cursor_twinkle;
+                    cursor_twinkle_cnt := 0;
+                end if;
+            end if;
+
+            if falling_edge(clk) and control_mem.mem_write = '1' then
+                if write_data(6 downto 0) = "0001101" then -- Enter
+                    target_row := target_row + 1;
+                    target_col := 0;
+                else
+                    target_col := target_col + 1;
+                    if target_col = 80 then
+                        target_row := target_row + 1;
+                        target_col := 0;
+                    end if;
+                    -- target_row := to_integer(Unsigned(address(15 downto 14)));
+                    -- target_col := to_integer(Unsigned(address(13 downto 7)));
+                    video_memory(target_row)
+                                (target_col)
+                                <= write_data(6 downto 0);
+                end if;
+
+            end if;
+        end if;
+    end process;
+
+    select_text: process (clk_50)
+    begin
+        top_left_corner <= (((column / FONT_WIDTH) * FONT_WIDTH),
+                            ((row / FONT_HEIGHT) * FONT_HEIGHT));
+
+        if 0 <= row and row < 4 * FONT_HEIGHT and 0 <= column and column < 80 * FONT_WIDTH then
+        displayAscii <= video_memory(row / FONT_HEIGHT)
+                                    (column / FONT_WIDTH);
+        else
+            displayAscii <= "0000000";
+        end if;
+
+        if column / FONT_WIDTH = target_col and row / FONT_HEIGHT = target_row then
+            if cursor_twinkle = '1' then
+                displayAscii <= "0000000";
+            else
+                displayAscii <= "0001000";
+            end if;
+        end if;
+    end process;
 
 end beh;
