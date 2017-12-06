@@ -43,6 +43,8 @@ entity MemoryAndWriteBack is
         serial1_pin_out: out type_serial_pin_out;
         -- PS2
         ps2_clk, ps2_data: in std_logic;
+        h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
+	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0);
 
         test: out std_logic_vector(15 downto 0)
     );
@@ -80,7 +82,10 @@ architecture memory_and_write_back_beh of MemoryAndWriteBack is
             serial1_pin_in: in type_serial_pin_in;
             serial1_pin_out: out type_serial_pin_out;
             -- PS2
-            ps2_clk, ps2_data: in std_logic
+            ps2_clk, ps2_data: in std_logic;
+            -- VGA
+            h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
+            r, g, b : out STD_LOGIC_VECTOR(2 downto 0)
         );
     end component MemoryRouter;
 
@@ -123,7 +128,13 @@ begin
             serial1_pin_out => serial1_pin_out,
             -- PS2
             ps2_clk => ps2_clk,
-            ps2_data => ps2_data
+            ps2_data => ps2_data,
+            -- VGA
+            h_sync => h_sync,
+            v_sync => v_sync,
+            r => r,
+            g => g,
+            b => b
         );
 
     mux_data_to_write_back: Mux2

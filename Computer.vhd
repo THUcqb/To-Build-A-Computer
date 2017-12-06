@@ -203,6 +203,8 @@ architecture Computer_beh of Computer is
             serial1_pin_out: out type_serial_pin_out;
             -- PS2
             ps2_clk, ps2_data: in std_logic;
+            h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
+    	    r, g, b : out STD_LOGIC_VECTOR(2 downto 0);
 
             test: out std_logic_vector(15 downto 0)
         );
@@ -444,6 +446,12 @@ begin
             -- PS2
             ps2_clk => ps2_clk,
             ps2_data => ps2_data,
+            -- VGA
+            h_sync => h_sync,
+            v_sync => v_sync,
+            r => r,
+            g => g,
+            b => b,
 
             test => mem_test
         );
@@ -482,25 +490,25 @@ begin
             bubble_select => hazard_bubble_select
         );
 
-    display: entity work.vga
-        port map
-        (
-            clk => clk_0,
-            rst => rst_button,
+    -- display: entity work.vga
+    --     port map
+    --     (
+            -- clk => clk_0,
+            -- rst => rst_button,
+            --
+            -- h_sync => h_sync,
+            -- v_sync => v_sync,
+            -- r => r,
+            -- g => g,
+            -- b => b,
 
-            h_sync => h_sync,
-            v_sync => v_sync,
-            r => r,
-            g => g,
-            b => b,
+            -- register_file => register_file,
 
-            register_file => register_file,
-
-            flash_pin => flash_pin_signal
+            -- flash_pin => flash_pin_signal
 
             -- ps2_clk => ps2_clk,
             -- ps2_data => ps2_data
-        );
+        -- );
 
     led <= id_ry_val(7 downto 0) & id_pc(7 downto 0);
 

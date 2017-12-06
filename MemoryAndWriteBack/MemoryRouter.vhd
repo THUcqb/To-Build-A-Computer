@@ -38,7 +38,11 @@ entity MemoryRouter is
         -- Serial port
         serial1_pin_in: in type_serial_pin_in;
         serial1_pin_out: out type_serial_pin_out;
-        ps2_clk, ps2_data: in std_logic
+        -- PS2
+        ps2_clk, ps2_data: in std_logic;
+        h_sync, v_sync    :  OUT  STD_LOGIC;  --horiztonal, vertical sync pulse
+        -- VGA
+        r, g, b : out STD_LOGIC_VECTOR(2 downto 0)
     );
 
 end entity MemoryRouter;
@@ -75,7 +79,7 @@ architecture beh of MemoryRouter is
     signal data_memory_control, serial1_control, ps2_control, vga_control
            : type_control_mem;
 
-    signal ps2_data_out, vga_data_out: std_logic_vector(15 downto 0);
+    signal ps2_data_out: std_logic_vector(15 downto 0);
 
 begin
 
@@ -107,7 +111,6 @@ begin
 
     --  Select the read out data with address
     read_data <= ps2_data_out when address = x"BF02" or address = x"BF03" else
-                 vga_data_out when address = x"BF04" and address = x"BF05" else
                  ram1_data when address(15) = '1' else
                  ram2_data;
 
@@ -152,4 +155,19 @@ begin
             data => ps2_data_out
         );
 
+    vga: entity work.vga
+        port map(
+        -- VGA
+            clk => clk,
+            clk_50 => clk_50,
+            rst => rst,
+            control_mem => vga_control,
+            address => address,
+            write_data => write_data,
+            h_sync => h_sync,
+            v_sync => v_sync,
+            r => r,
+            g => g,
+            b => b
+        );
 end architecture beh;
