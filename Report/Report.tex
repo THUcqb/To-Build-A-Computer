@@ -1,0 +1,52 @@
+\documentclass[a4paper]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\usepackage{amssymb, amsthm, amsmath, amstext}
+\usepackage{indentfirst}
+\usepackage{cite, url}
+\usepackage{array, multirow}
+\usepackage{float}
+
+\graphicspath{{figure/}}
+\geometry{left=3.17cm,right=3.17cm,top=2.54cm,bottom=2.54cm}
+\setlength{\parindent}{2em}
+\pagestyle{plain}
+
+\makeatletter % `@' now normal "letter"
+\@addtoreset{equation}{section}
+\makeatother  % `@' is restored as "non-letter"
+\renewcommand\theequation{\oldstylenums{\thesection}%
+                   .\oldstylenums{\arabic{equation}}}
+
+\title{造计算机实验报告}
+\author
+{
+    计51~2015011403~陈齐斌\\
+    计55~2015011362~左浩佳\\
+    计55~2015011350~徐韧喆
+}
+\date{}
+
+\begin{document}
+    \maketitle
+
+    \tableofcontents
+    
+    \section{实验目标}
+
+    \section{指令集任务}
+
+    \section{实验结果}
+
+    \section{架构设计}
+
+    \section{模块设计简述}
+
+    \section{主要模块设计详述}
+
+    \section{遇到的问题和解决}
+
+    \section{心得体会}
+
+    \section*{鸣谢}
+\end{document}
