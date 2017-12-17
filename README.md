@@ -4,13 +4,13 @@
 
 Computer Organization and Design course project.
 
-## Demo
-- We love CPU :)
-![love cpu](http://otukr87eg.bkt.clouddn.com/2efeec790d30039697d3786c84a7b1b2.jpg)
-
 ## Documentation
 - Datapath design diagram can be found at [Datapath draw.io](https://drive.google.com/file/d/1nN_b52ZtlHKoNCrz3iWf9vKDxEoyRruB/view?usp=sharing).
 - Instruction set architecture can be found at [THCO MIPS ISA](https://docs.google.com/spreadsheets/d/1v4iBajBw0nECTGmqjqjRQApFrGEWDWOQSmaUnJdU_yE/edit?usp=sharing).
+
+## Demo
+- We love CPU :)
+![love cpu](http://otukr87eg.bkt.clouddn.com/2efeec790d30039697d3786c84a7b1b2.jpg)
 
 ## Performance Testing
 
