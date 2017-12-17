@@ -10,7 +10,7 @@ Computer Organization and Design course project.
 
 ## Documentation
 - Datapath design diagram can be found at [Datapath draw.io](https://drive.google.com/file/d/1nN_b52ZtlHKoNCrz3iWf9vKDxEoyRruB/view?usp=sharing).
-- Instruction set architecture can be found at [THCO MIPS ISA](https://drive.google.com/file/d/1nN_b52ZtlHKoNCrz3iWf9vKDxEoyRruB/view?usp=sharing).
+- Instruction set architecture can be found at [THCO MIPS ISA](https://docs.google.com/spreadsheets/d/1v4iBajBw0nECTGmqjqjRQApFrGEWDWOQSmaUnJdU_yE/edit?usp=sharing).
 
 ## Performance Testing
 
